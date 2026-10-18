@@ -8,7 +8,7 @@
 1. **每周一**：把下面「当前周」改成本周编号，勾掉上周的验收项。
 2. **每天**：生成当天笔记（模板在 `notes/_template.md`）：
    ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File .\new-note.ps1
+   pwsh -NoProfile -File .\new-note.ps1
    ```
    然后写三行：学了什么 / 卡在哪 / 明天第一件事。
 3. **每天 commit 一次**，标题格式 `w03d2: 学完 Flex 布局`。绿点就是进度条。
@@ -84,8 +84,9 @@
 | node | 24.11.0 |
 | pnpm | 11.10.0 |
 | python | 3.12.7 |
+| pwsh (PowerShell 7) | 7.6.7 |
 
-> 注意：本机只有 Windows PowerShell 5.1（没有 pwsh），所以脚本按 5.1 兼容写法编写，中文文本强制以 UTF-8 读写。
+> 系统还自带 Windows PowerShell 5.1（`powershell.exe`），两者并存互不影响。本仓库脚本要求 **pwsh 7**（文件头 `#Requires -Version 7.0`），这样中文按 UTF-8 读写，不用再迁就 5.1 的 ANSI 默认值。
 
 ## 纪律
 

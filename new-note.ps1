@@ -1,26 +1,22 @@
-# Usage (Windows PowerShell 5.1 compatible):
-#   powershell -NoProfile -ExecutionPolicy Bypass -File .\new-note.ps1
-#   powershell -NoProfile -ExecutionPolicy Bypass -File .\new-note.ps1 2026-10-20
-param([string]$Date)
+#Requires -Version 7.0
+# 用法：pwsh -NoProfile -File .\new-note.ps1              → 生成今天的笔记
+#       pwsh -NoProfile -File .\new-note.ps1 2026-10-20   → 生成指定日期的笔记
+param([string]$Date = (Get-Date -Format 'yyyy-MM-dd'))
 
-if ([string]::IsNullOrWhiteSpace($Date)) { $Date = Get-Date -Format 'yyyy-MM-dd' }
+$root     = $PSScriptRoot
+$template = Join-Path $root 'notes/_template.md'
+$out      = Join-Path $root "notes/$Date.md"
 
-$root = $PSScriptRoot
-$tpl  = Join-Path $root 'notes\_template.md'
-$out  = Join-Path $root ('notes\' + $Date + '.md')
-
-if (-not (Test-Path -LiteralPath $tpl)) {
-    Write-Host ('Template missing: ' + $tpl)
+if (-not (Test-Path -LiteralPath $template)) {
+    Write-Host "模板缺失：$template"
     exit 1
 }
 if (Test-Path -LiteralPath $out) {
-    Write-Host ('Exists: ' + $out)
+    Write-Host "已存在，直接打开：$out"
     exit 0
 }
 
-# Read/write explicitly as UTF-8: PS 5.1 defaults would mangle Chinese text.
-$text = [System.IO.File]::ReadAllText($tpl, [System.Text.Encoding]::UTF8)
-$text = $text.Replace('YYYY-MM-DD', $Date)
-$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-[System.IO.File]::WriteAllText($out, $text, $utf8NoBom)
-Write-Host ('Created: ' + $out)
+(Get-Content -LiteralPath $template -Raw -Encoding utf8).Replace('YYYY-MM-DD', $Date) |
+    Set-Content -LiteralPath $out -Encoding utf8NoBOM
+
+Write-Host "已创建：$out"
