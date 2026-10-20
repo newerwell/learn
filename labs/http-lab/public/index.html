@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HTTP 实验台</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --line: #262b36; --fg: #e6e9ef;
+    --muted: #9aa4b2; --accent: #6ea8fe; --ok: #5dd39e; --warn: #ffb454; --err: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px; background: var(--bg); color: var(--fg);
+    font: 15px/1.6 ui-sans-serif, system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  h2 { font-size: 15px; margin: 0 0 10px; color: var(--accent); }
+  .hint { color: var(--muted); margin: 0 0 20px; }
+  code { background: #0a0c10; padding: 1px 6px; border-radius: 4px; color: var(--warn); }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  section {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px;
+  }
+  section p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+  button {
+    background: #1f2530; color: var(--fg); border: 1px solid var(--line);
+    border-radius: 7px; padding: 8px 12px; margin: 0 8px 8px 0; cursor: pointer; font-size: 13px;
+  }
+  button:hover { border-color: var(--accent); }
+  button:active { transform: translateY(1px); }
+  #log {
+    margin-top: 20px; background: #0a0c10; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px; min-height: 220px; max-height: 420px; overflow: auto;
+    font: 12.5px/1.55 ui-monospace, Consolas, "Cascadia Code", monospace; white-space: pre-wrap;
+  }
+  .t-ok { color: var(--ok); } .t-err { color: var(--err); } .t-warn { color: var(--warn); } .t-dim { color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>HTTP 实验台</h1>
+<p class="hint">
+  页面源：<code id="self"></code>　跨域对照源：<code id="other"></code><br />
+  每次点击后，<strong>同时</strong>看下方日志和 DevTools → Network 面板：日志告诉你"JS 收到了什么"，Network 告诉你"网络上到底发生了什么"。
+</p>
+
+<div class="grid">
+
+  <section>
+    <h2>实验 1 · 同源 vs 跨域（D8 / D10）</h2>
+    <p>同样是 <code>/api/hello</code>，改个主机名就从"能拿到"变成"被拦"。</p>
+    <button data-run="same">同源 fetch('/api/hello')</button>
+    <button data-run="cross">跨域 fetch(其它源 + '/api/hello')</button>
+    <button data-run="headers">看我的请求头（Origin / Referer）</button>
+  </section>
+
+  <section>
+    <h2>实验 2 · 服务器给不给 CORS 头（D10）</h2>
+    <p>拦截发生在浏览器，不在服务器——对比"有 ACAO"和"没有 ACAO"。</p>
+    <button data-run="cors">跨域 /api/cors（有 ACAO:*）</button>
+    <button data-run="corsnone">跨域 /api/hello（无 ACAO）</button>
+    <button data-run="cred">跨域带凭据 /api/cors-cred</button>
+  </section>
+
+  <section>
+    <h2>实验 3 · 预检请求（D10）</h2>
+    <p>加了自定义头 <code>X-Demo</code> 就变成"非简单请求"，浏览器会先发一次 OPTIONS。</p>
+    <button data-run="preflight-simple">不带自定义头（无预检）</button>
+    <button data-run="preflight">带 X-Demo（触发预检）</button>
+  </section>
+
+  <section>
+    <h2>实验 4 · 强缓存 vs 协商缓存（D9）</h2>
+    <p>点两次，对比 Network 里第二次是"没发请求"还是"发了但 304"。</p>
+    <button data-run="cache60">/api/cache60（max-age=60）</button>
+    <button data-run="etag">/api/etag（ETag → 304）</button>
+    <button data-run="lastmod">/api/lastmod（Last-Modified）</button>
+    <button data-run="nocache">对照：no-store 永不缓存</button>
+  </section>
+
+  <section>
+    <h2>实验 5 · 重定向与慢请求（D9 / D7）</h2>
+    <p>302 会被 fetch 自动跟随；慢请求在瀑布图里就是一根长条。</p>
+    <button data-run="redirect">/api/redirect（302 → /api/hello）</button>
+    <button data-run="redirect-manual">同上，但 redirect:'manual'</button>
+    <button data-run="slow">/api/slow（2 秒）</button>
+  </section>
+
+  <section>
+    <h2>实验 6 · Cookie 与 HttpOnly（D9）</h2>
+    <p>服务器种了 <code>HttpOnly</code> 的 Cookie，JS 读不到，但 Network 里能看到它。</p>
+    <button data-run="cookie">种 Cookie（顺便读 document.cookie）</button>
+    <button data-run="showcookie">再读一次 document.cookie</button>
+  </section>
+
+</div>
+
+<div id="log"><span class="t-dim">点击上面的按钮，结果会打印在这里。</span></div>
+
+<script>
+  const other = location.hostname === '127.0.0.1'
+    ? `http://localhost:${location.port}`
+    : `http://127.0.0.1:${location.port}`;
+  document.getElementById('self').textContent = location.origin;
+  document.getElementById('other').textContent = other;
+
+  const logEl = document.getElementById('log');
+  const stamp = () => new Date().toLocaleTimeString();
+  function line(text, cls = '') {
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = `[${stamp()}] ${text}`;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  function block(title, obj) {
+    line(`--- ${title} ---`);
+    const pre = document.createElement('div');
+    pre.className = 't-dim';
+    pre.style.margin = '0 0 8px 12px';
+    pre.textContent = JSON.stringify(obj, null, 2);
+    logEl.appendChild(pre);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  async function inspect(label, res) {
+    const headers = {};
+    res.headers.forEach((v, k) => (headers[k] = v));
+    let body = '';
+    try { body = await res.text(); } catch { body = '<无法读取 body>'; }
+    block(label, {
+      status: res.status,
+      ok: res.ok,
+      redirected: res.redirected,
+      finalUrl: res.url,
+      headers,
+      body: body.slice(0, 600),
+    });
+  }
+
+  const actions = {
+    async same() {
+      line('发起同源请求 /api/hello', 't-ok');
+      await inspect('同源结果', await fetch('/api/hello'));
+      line('→ 同源没有 CORS 检查，一切正常。', 't-dim');
+    },
+
+    async cross() {
+      line(`发起跨域请求 ${other}/api/hello（该接口无 ACAO）`, 't-warn');
+      try {
+        await inspect('跨域结果', await fetch(`${other}/api/hello`));
+      } catch (e) {
+        line(`JS 只收到一个模糊的 TypeError：${e.name}: ${e.message}`, 't-err');
+        line('→ 真正的错误原因在 Console 里（红色那条 "blocked by CORS policy"），fetch 不告诉你细节。', 't-dim');
+        line('→ 打开 Console，把那一整段原文抄进笔记。', 't-warn');
+      }
+    },
+
+    async headers() {
+      await inspect('服务器看到的请求头', await fetch('/api/headers'));
+      line('→ 注意 Origin 头：它由浏览器自动加，JS 无法伪造。', 't-dim');
+    },
+
+    async cors() {
+      line('跨域请求带 ACAO:* 的接口', 't-ok');
+      await inspect('结果', await fetch(`${other}/api/cors`));
+      line('→ 同一个浏览器、同样的跨域，服务器给了 ACAO 就放行。', 't-dim');
+    },
+
+    async corsnone() {
+      line('跨域请求不带 ACAO 的接口（同上但服务器没给头）', 't-warn');
+      try {
+        await inspect('结果', await fetch(`${other}/api/hello`));
+      } catch {
+        line('→ 被拦。区别只在响应头，不在代码。', 't-err');
+      }
+    },
+
+    async cred() {
+      line(`跨域 + credentials: 'include'`, 't-ok');
+      await inspect('结果', await fetch(`${other}/api/cors-cred`, { credentials: 'include' }));
+      line('→ 注意 ACAO 回显了具体 origin 而不是 *：带凭据时 * 不合法。', 't-dim');
+    },
+
+    async 'preflight-simple'() {
+      line('GET，无自定义头 → 简单请求，无预检', 't-ok');
+      await inspect('结果', await fetch(`${other}/api/preflight`));
+      line('→ Network 里应该只有一条请求。', 't-dim');
+    },
+
+    async preflight() {
+      line('GET + X-Demo → 非简单请求，先发 OPTIONS', 't-ok');
+      await inspect('结果', await fetch(`${other}/api/preflight`, { headers: { 'X-Demo': 'hello' } }));
+      line('→ Network 里是两条：OPTIONS(204) 然后 GET(200)。', 't-warn');
+      line('→ 如果服务器不处理 OPTIONS，你会看到"预检失败"。', 't-dim');
+    },
+
+    async cache60() {
+      const t0 = performance.now();
+      line('请求 /api/cache60（第一次）', 't-ok');
+      await inspect('第 1 次', await fetch('/api/cache60'));
+      line('再发一次同样的请求（60 秒内）...', 't-warn');
+      const t1 = performance.now();
+      await inspect('第 2 次', await fetch('/api/cache60'));
+      line(`第二次 JS 耗时 ${(performance.now() - t1).toFixed(1)}ms（第一次 ${(t1 - t0).toFixed(1)}ms）`, 't-dim');
+      line('→ 关键看 Network：第二次应该显示 from memory cache / from disk cache，没有真的发请求。', 't-warn');
+    },
+
+    async etag() {
+      line('请求 /api/etag（第一次）', 't-ok');
+      await inspect('第 1 次', await fetch('/api/etag'));
+      line('再请求一次（内容没变）...', 't-warn');
+      await inspect('第 2 次', await fetch('/api/etag'));
+      line('→ JS 两次都看到 200 和同样的 body，但 Network 里第二次是 304（body 由缓存提供）。', 't-warn');
+      line('→ 这就是"协商缓存"：请求发出去了，但没传 body，省流量。', 't-dim');
+    },
+
+    async lastmod() {
+      await inspect('第 1 次', await fetch('/api/lastmod'));
+      line('再请求一次（时间没变）...', 't-warn');
+      await inspect('第 2 次', await fetch('/api/lastmod'));
+      line('→ ETag 是"内容指纹"，Last-Modified 是"时间戳"，前者更精确。', 't-dim');
+    },
+
+    async nocache() {
+      await inspect('第 1 次', await fetch('/api/hello'));
+      line('再请求一次（no-store 永远重新下载）...', 't-warn');
+      await inspect('第 2 次', await fetch('/api/hello'));
+      line('→ 两次都是真实请求、都是 200，没有缓存参与。', 't-dim');
+    },
+
+    async redirect() {
+      line('请求 /api/redirect，默认 follow', 't-ok');
+      await inspect('结果', await fetch('/api/redirect'));
+      line('→ 注意 redirected: true 和 finalUrl 已经变成 /api/hello。', 't-warn');
+      line('→ Network 里是一条 302 + 一条 200。', 't-dim');
+    },
+
+    async 'redirect-manual'() {
+      line('同样的请求，但 redirect: "manual"', 't-ok');
+      await inspect('结果', await fetch('/api/redirect', { redirect: 'manual' }));
+      line('→ 手动模式下 JS 拿到的是 opaque-redirect（status 0，body 读不到）。', 't-warn');
+    },
+
+    async slow() {
+      line('请求 /api/slow（2 秒）', 't-warn');
+      const t = performance.now();
+      await inspect('结果', await fetch('/api/slow?ms=2000'));
+      line(`耗时 ${(performance.now() - t).toFixed(0)}ms → 去 Network 看瀑布里那根长条，Time 就是它。`, 't-dim');
+    },
+
+    async cookie() {
+      await inspect('种 Cookie 的响应', await fetch('/api/cookie'));
+      line(`当前 document.cookie = ${JSON.stringify(document.cookie)}`, 't-ok');
+      line('→ 因为 HttpOnly，sid 不会出现在这里。', 't-dim');
+      line('→ 去 DevTools → Application → Cookies 看，它在。', 't-warn');
+      line('→ 再点一次"再读一次"，仍然是空——不是没种上，是 JS 无权读。', 't-dim');
+    },
+
+    async showcookie() {
+      await inspect('种一次再读', await fetch('/api/cookie'));
+      line(`document.cookie = ${JSON.stringify(document.cookie)}`, 't-ok');
+      line('→ Application 面板里能看到 sid；JS 读不到 = HttpOnly 生效。', 't-warn');
+    },
+  };
+
+  document.querySelectorAll('button[data-run]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const fn = actions[btn.dataset.run];
+      if (!fn) return line(`没有实现：${btn.dataset.run}`, 't-err');
+      line('');
+      try { await fn(); } catch (e) { line(`异常：${e.name} ${e.message}`, 't-err'); }
+    });
+  });
+</script>
+</body>
+</html>

@@ -16,11 +16,16 @@
 
 ## 当前周
 
-**第 1 周 · 阶段 0：地基**（命令行 / Git / DevTools / HTTP）
+**第 3 周 · 阶段 1：前端基础**（HTML / CSS / JS / TS）
 
-本周交付物：一个练习仓库 + 第一次 PR + 一份「网页加载过程中发生了什么」的笔记
+进度：D1–D5 已基本掌握；D6–D10（DevTools / HTTP 报文 / 缓存 / CORS）理解偏弱，改用"亲手制造现象"的方式回炉——见 `labs/http-lab`。
 
-👉 **逐日任务清单**：[notes/W1-W2-任务.md](notes/W1-W2-任务.md)（14 天，每天 90 分钟，含完成判据与常用命令）
+- W1–W2 逐日任务：[notes/W1-W2-任务.md](notes/W1-W2-任务.md)（14 天）
+- W3–W8 逐日任务：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)（42 天，含 5 个回炉点）
+- HTTP 实验台：[labs/http-lab/README.md](labs/http-lab/README.md)
+  ```powershell
+  node labs\http-lab\server.js        # 打开 http://127.0.0.1:3100
+  ```
 
 ---
 
