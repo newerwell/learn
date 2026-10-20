@@ -4,6 +4,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>我的学习面板</title>
+    <style>
+        /* D17：这 4 条规则都会选中任务详情中的 priority-demo 段落。
+           加上段落的内联样式，共有 5 处颜色声明。
+           逐步删除：内联样式 → ID 规则 → 类规则 → 后代规则。
+           每次保存并刷新，预期颜色依次为：红 → 紫 → 绿 → 橙 → 蓝。
+           p 规则也会影响页面中其他没有单独设置颜色的段落。 */
+
+        /* 标签选择器：优先级 (0, 0, 1) */
+        p {
+            color: blue;
+        }
+
+        /* 类选择器：优先级 (0, 1, 0) */
+        .practice {
+            color: green;
+        }
+
+        /* ID 选择器：优先级 (1, 0, 0) */
+        #priority-demo {
+            color: purple;
+        }
+
+        /* 后代选择器：优先级 (0, 0, 2)，写在后面也赢不了类或 ID */
+        article p {
+            color: orange;
+        }
+    </style>
 </head>
 <body>
     <!--header：整个页面的介绍区域，网站点名称的导航 -->
@@ -30,7 +57,8 @@
     <!-- article : 一条完整的任务详情，单独展示也能看得懂-->
     <article aria-labelledby="task-detail">
         <h2 id="task-detail">D15：完成HTML语义化骨架</h2>
-        <p>目标：使用合适的标签组织页面内容。</p>
+        <!-- D17：内联样式先胜出；在 DevTools 中观察哪些 color 声明被划掉 -->
+        <p id="priority-demo" class="practice" style="color: red;">目标：使用合适的标签组织页面内容。</p>
         <p>状态：进行中</p>
         <p>完成标准：能解释每个主要标签为什么用在这里。</p>
     </article>
