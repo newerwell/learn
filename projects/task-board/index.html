@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>我的学习面板</title>
+</head>>
+<body>
+    <!--header：整个页面的介绍区域，网站点名称的导航 -->
+    <header>
+        <h1>我的学习任务面板</h1>
+        <!-- nav:这里的连接用于干在页面的主要区域之间的导航 -->
+        <nav aria-label="页面导航">
+            <a href="#today">今日计划</a>
+            <a href="#task-detail">任务详情</a>
+            <a href="#tips">学习提示</a>
+        </nav>
+    </header>
+    <!-- main:界面的只要内容，整个界面只有一个-->
+<main>
+    <!-- section:把今日计划这个主题的内容组织在一起-->
+    <section aria-labelledby="today">
+    <h2 id="today">今日计划</h2>
+        <u1>
+            <li>理解html语义标签</li>
+            <li>完成任务看板的页面结构</li>
+            <li>用浏览器检查阅读顺序</li>
+        </u1>
+    </section>
+    <!-- article : 一条完整的任务详情，单独展示也能看得懂-->
+    <article aria-labelledby="task-detail">
+        <h2 id="task-detail">D15：完成HTML语义化骨架</h2>
+        <p>目标：使用合适的标签组织页面内容。</p>
+        <p>状态：进行中</p>
+        <p>完成标准：能解释每个主要标签为什么用在这里。</p>
+    </article>
+    <aside aria-labelledby="tips">
+        <h2 id="tips">学习提示</h2>
+        <p>先想清楚内容的含义，再选择标签。</p>
+        <p>没有合适的语义标签、只是需要一个容器时，可以用 div。</p>
+    </aside>
+</main>
+    <footer>
+         <p>我的全栈学习记录 · 阶段 1</p>
+    </footer>
+</body>>
+</html>
