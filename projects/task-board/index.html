@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>我的学习面板</title>
-</head>>
+</head>
 <body>
     <!--header：整个页面的介绍区域，网站点名称的导航 -->
     <header>
@@ -34,6 +34,91 @@
         <p>状态：进行中</p>
         <p>完成标准：能解释每个主要标签为什么用在这里。</p>
     </article>
+    <section aria-labelledby="register-title">
+        <h2 id="register-title">注册练习</h2>
+        <!-- 本地练习先阻止实际的提交，保留浏览器的输入校验-->
+        <form method="post" onsubmit="event.preventDefault()">
+            <!-- fieldset分组，legend 给这一组起名字-->
+            <fieldset>
+                <legend>账号信息</legend>
+                <p>
+                   <!-- for对应输入框的id ，点击文字也能聚焦-->
+                    <label for="username">用户名 </label>
+                   <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autocomplete="username"
+                    required
+                    minlength="3"
+                    maxlength="20"
+                    pattern="[A-Za-z][A-Za-z0-9_]{2,19}"
+                    aria-describedby="username-help"
+                >
+                    <small id="username-help" >3–20 个字符，英文字母开头，只能含字母、数字和下划线。</small>
+                </p>
+                <p>
+                    <label for="email">邮箱</label>
+                    <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                    >
+                </p>
+                <p>
+                <label for="password">密码（至少 8 个字符）</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autocomplete="new-password"
+                    required
+                    minlength="8"
+                >
+                </p>
+            </fieldset>
+             <fieldset>
+            <legend>个人信息</legend>
+
+            <p>
+                <label for="birthday">生日</label>
+                <input
+                    id="birthday"
+                    name="birthday"
+                    type="date"
+                    autocomplete="bday"
+                    required
+                >
+            </p>
+
+            <fieldset>
+                <legend>性别</legend>
+
+                <input id="male" name="gender"
+                       type="radio" value="male" required>
+                <label for="male">男</label>
+
+                <input id="female" name="gender"
+                       type="radio" value="female" required>
+                <label for="female">女</label>
+
+                <input id="private" name="gender"
+                       type="radio" value="private" required>
+                <label for="private">不愿透露</label>
+            </fieldset>
+        </fieldset>
+            <p>练习条款：这个表单用于学习，不创建真实账号。</p>
+
+        <p>
+            <input id="agree" name="agree" type="checkbox" required>
+            <label for="agree">我已阅读并同意练习条款</label>
+        </p>
+
+        <button type="submit">提交注册练习</button>
+        </form>
+    </section>
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -43,5 +128,5 @@
     <footer>
          <p>我的全栈学习记录 · 阶段 1</p>
     </footer>
-</body>>
+</body>
 </html>
