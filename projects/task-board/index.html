@@ -34,7 +34,7 @@
         /* D18：两个盒子使用相同的 width、padding、border 和 margin */
         .box {
             width: 200px;
-            padding: 20px;
+            padding: 30px;
             border: 5px solid;
             margin: 10px;
         }
@@ -48,6 +48,39 @@
         .b {
             box-sizing: border-box;
         }
+
+        /* D19：父容器负责排列，只有直接子元素参与这层 Flex 布局 */
+        .flex-demo {
+            display: flex;
+            flex-direction: row;         /* 改成 column，观察主轴方向变化 */
+            justify-content: flex-start; /* 依次试 center、flex-end、space-between */
+            align-items: flex-start;     /* 改成 center，观察交叉轴对齐 */
+            gap: 12px;                  /* 改成 24px，观察盒子间距 */
+            flex-wrap: nowrap;
+
+            height: 220px;
+            padding: 12px;
+            border: 2px solid #555;
+        }
+
+        .flex-item {
+            width: 80px;
+            height: 40px;
+            box-sizing: border-box;
+            flex-shrink: 0; /* 禁止缩小，方便观察换行 */
+            background: #dbeafe;
+            border: 1px solid #2563eb;
+
+            /* 实验 2：取消下一行注释，让三个盒子分配可用宽度。
+               flex: 1 通常展开为 grow: 1、shrink: 1、basis: 0%。 */
+            /* flex: 1; */
+        }
+
+        /* 实验 3：恢复 row，保持 flex: 1 被注释，再修改 .flex-demo：
+           flex-wrap: wrap;
+           width: 180px;
+           height: auto;
+           两个盒子加间距共 80 + 12 + 80 = 172px，第三个会换行。 */
     </style>
 </head>
 <body>
@@ -59,6 +92,7 @@
             <a href="#today">今日计划</a>
             <a href="#task-detail">任务详情</a>
             <a href="#box-title">盒模型实验</a>
+            <a href="#flex-title">Flex 实验</a>
             <a href="#tips">学习提示</a>
         </nav>
     </header>
@@ -181,6 +215,26 @@
         <p>在 DevTools 的 Elements 中分别选中两个盒子，查看 Computed 里的盒模型图。</p>
         <p>Console 中可用下面这行读取 A 的边框盒宽度；把 .a 改成 .b 可测量 B。结果不包含 margin。</p>
         <pre><code>document.querySelector('.a').getBoundingClientRect().width</code></pre>
+    </section>
+
+    <!-- D19：一次只改一个属性，保存、刷新，对照盒子的排列变化 -->
+    <section aria-labelledby="flex-title">
+        <h2 id="flex-title">D19：Flex 布局实验</h2>
+        <p>父容器设置 display: flex，三个直接子元素参与排列。</p>
+
+        <div class="flex-demo">
+            <div class="flex-item">1</div>
+            <div class="flex-item">2</div>
+            <div class="flex-item">3</div>
+        </div>
+
+        <ol>
+            <li>对齐：修改父容器的 justify-content 和 align-items，观察居中、靠右和两端对齐。</li>
+            <li>方向与间距：把 flex-direction 改成 column，观察主轴变化；修改 gap，观察间距。</li>
+            <li>空间分配：恢复 row，取消子元素中 flex: 1 的注释，观察三个盒子的宽度变化。</li>
+            <li>换行：重新注释 flex: 1，将父容器设置为 flex-wrap: wrap、width: 180px、height: auto。</li>
+        </ol>
+        <p>记住：justify-content 管主轴，align-items 管交叉轴；row 和 column 会改变两条轴的方向。</p>
     </section>
 
     <aside aria-labelledby="tips">
