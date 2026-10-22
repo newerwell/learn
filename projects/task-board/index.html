@@ -70,7 +70,6 @@
             flex-shrink: 0; /* 禁止缩小，方便观察换行 */
             background: #dbeafe;
             border: 1px solid #2563eb;
-
             /* 实验 2：取消下一行注释，让三个盒子分配可用宽度。
                flex: 1 通常展开为 grow: 1、shrink: 1、basis: 0%。 */
             /* flex: 1; */
@@ -81,20 +80,88 @@
            width: 180px;
            height: auto;
            两个盒子加间距共 80 + 12 + 80 = 172px，第三个会换行。 */
+        /* D20：吸顶导航；窄屏时标题、菜单和注册入口可以换行 */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: white;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .site-title {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .site-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .site-nav a,
+        .nav-action {
+            white-space: nowrap;
+        }
+
+        .nav-action {
+            padding: 8px 12px;
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        /* 父容器统一控制换行和间距，卡片上不需要手算 margin */
+        .card-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .task-card {
+            flex: 1 1 260px;
+            min-width: 260px;
+            box-sizing: border-box;
+            padding: 16px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+        }
+
+        /* 锚点跳转时给吸顶导航留出空间，避免标题被遮住 */
+        main h2[id] {
+            scroll-margin-top: 12rem;
+        }
+
+        /* 旧实验中的长代码只在代码框内滚动，避免撑宽整个窄屏页面 */
+        main pre {
+            max-width: 100%;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
     <!--header：整个页面的介绍区域，网站点名称的导航 -->
-    <header>
-        <h1>我的学习任务面板</h1>
+    <header class="site-header">
+        <h1 class="site-title">我的学习任务面板</h1>
         <!-- nav:这里的连接用于干在页面的主要区域之间的导航 -->
-        <nav aria-label="页面导航">
+        <nav class="site-nav" aria-label="页面导航">
             <a href="#today">今日计划</a>
             <a href="#task-detail">任务详情</a>
             <a href="#box-title">盒模型实验</a>
             <a href="#flex-title">Flex 实验</a>
+            <a href="#cards-title">任务卡片</a>
             <a href="#tips">学习提示</a>
         </nav>
+        <!-- 按钮外观的链接：跳转到已有的注册表单 -->
+        <a class="nav-action" href="#register-title">注册练习</a>
     </header>
     <!-- main:界面的只要内容，整个界面只有一个-->
 <main>
@@ -235,6 +302,31 @@
             <li>换行：重新注释 flex: 1，将父容器设置为 flex-wrap: wrap、width: 180px、height: auto。</li>
         </ol>
         <p>记住：justify-content 管主轴，align-items 管交叉轴；row 和 column 会改变两条轴的方向。</p>
+    </section>
+
+    <!-- D20：组合 Flex 排列、自动换行和统一间距，形成真实的卡片列表 -->
+    <section aria-labelledby="cards-title">
+        <h2 id="cards-title">D20：我的任务卡片</h2>
+
+        <div class="card-list">
+            <article class="task-card">
+                <h3>完善注册表单</h3>
+                <p>检查标签关联、必填校验和键盘操作。</p>
+            </article>
+
+            <article class="task-card">
+                <h3>验证选择器优先级</h3>
+                <p>用 DevTools 解释最终生效的文字颜色。</p>
+            </article>
+
+            <article class="task-card">
+                <h3>检查盒模型</h3>
+                <p>测量内容区、内边距和边框的宽度。</p>
+            </article>
+        </div>
+
+        <p>把浏览器视口缩到 375px，检查卡片是否变成一列、页面是否出现横向滚动条。</p>
+        <p>向下滚动观察导航吸顶；再拉宽窗口，观察卡片换行和 16px 间距。</p>
     </section>
 
     <aside aria-labelledby="tips">
