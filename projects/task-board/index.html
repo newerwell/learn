@@ -175,6 +175,77 @@
             grid-template-rows: none;
             grid-auto-rows: auto;
         }
+        /* D24：外层 Grid 定义侧栏、顶部栏和内容区，不设置固定高度 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 240px minmax(0, 1fr);
+            grid-template-areas:
+                "sidebar topbar"
+                "sidebar content";
+            gap: 16px;
+        }
+
+        .dashboard-sidebar {
+            grid-area: sidebar;
+            padding: 16px;
+            background: #eff6ff;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dashboard-header {
+            grid-area: topbar;
+            padding: 16px;
+            background: #f1f5f9;
+        }
+
+        .dashboard-content {
+            grid-area: content;
+            min-width: 0;
+        }
+
+        /* 内层 Grid 独立控制四张卡片，桌面排成 2×2 */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .dashboard-card {
+            padding: 16px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        /* 内部导航跳转时，也给页面顶部的吸顶导航留出空间 */
+        .dashboard [id] {
+            scroll-margin-top: 12rem;
+        }
+
+        /* 同一套 HTML：视口不超过 700px 时重排命名区域和卡片列数 */
+        @media (max-width: 700px) {
+            .dashboard {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-areas:
+                    "sidebar"
+                    "topbar"
+                    "content";
+            }
+
+            .dashboard-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -189,6 +260,7 @@
             <a href="#flex-title">Flex 实验</a>
             <a href="#cards-title">任务卡片</a>
             <a href="#grid-title">Grid 实验</a>
+            <a href="#dashboard-title">工作面板</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -408,6 +480,54 @@
         </div>
         <p>容器宽度为 600px 时，两列的最小宽度加间距是 492px，三列需要 744px，因此会显示两列。</p>
         <p>240px 是列宽下限，容器比它还窄时仍可能溢出。自适应示例没有跨列卡片，避免在单列时强制产生第二列。</p>
+    </section>
+
+    <!-- D24：保留同一套内容，通过媒体查询切换桌面和手机布局 -->
+    <section aria-labelledby="dashboard-title">
+        <h2 id="dashboard-title">D24：学习工作面板</h2>
+
+        <div class="dashboard">
+            <aside class="dashboard-sidebar">
+                <h3>学习导航</h3>
+                <nav class="dashboard-nav" aria-label="工作面板导航">
+                    <a href="#dashboard-overview">学习概览</a>
+                    <a href="#dashboard-plan">今日计划</a>
+                </nav>
+            </aside>
+
+            <header class="dashboard-header">
+                <h3 id="dashboard-overview">学习概览</h3>
+                <p>把每天的练习整理成一个完整页面。</p>
+            </header>
+
+            <!-- 页面已经有一个 main，工作面板的内容区使用普通容器 -->
+            <div class="dashboard-content">
+                <div class="dashboard-cards">
+                    <article class="dashboard-card">
+                        <h4>HTML 结构</h4>
+                        <p>练习语义标签、表单和可访问性。</p>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <h4>CSS 布局</h4>
+                        <p>练习盒模型、Flex 和 Grid。</p>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <h4>HTTP 观察</h4>
+                        <p>用 Network 分析请求、缓存和资源大小。</p>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <h4 id="dashboard-plan">今日计划</h4>
+                        <p>完成工作面板，并检查桌面和手机布局。</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <p>宽屏时观察左侧导航、右上顶部栏和 2×2 卡片；把视口调到 375px，观察导航移到上方、卡片变成单列。</p>
+        <p>给卡片增加几行文字，检查内容能否自然撑开；在 DevTools 中打开 Grid 辅助线，观察命名区域的变化。</p>
     </section>
 
     <aside aria-labelledby="tips">
