@@ -30,6 +30,24 @@
         article p {
             color: orange;
         }
+
+        /* D18：两个盒子使用相同的 width、padding、border 和 margin */
+        .box {
+            width: 200px;
+            padding: 20px;
+            border: 5px solid;
+            margin: 10px;
+        }
+
+        /* width 只包含内容；边框盒宽度 = 200 + 40 + 10 = 250px */
+        .a {
+            box-sizing: content-box;
+        }
+
+        /* width 包含内容、padding 和 border；内容宽度 = 200 - 40 - 10 = 150px */
+        .b {
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -40,6 +58,7 @@
         <nav aria-label="页面导航">
             <a href="#today">今日计划</a>
             <a href="#task-detail">任务详情</a>
+            <a href="#box-title">盒模型实验</a>
             <a href="#tips">学习提示</a>
         </nav>
     </header>
@@ -147,6 +166,23 @@
         <button type="submit">提交注册练习</button>
         </form>
     </section>
+    <!-- D18：对照两种 box-sizing，观察 width 到底包含哪些部分 -->
+    <section aria-labelledby="box-title">
+        <h2 id="box-title">D18：盒模型实验</h2>
+        <p>两个盒子的 width 都是 200px，比较它们的实际宽度和内容区域。</p>
+
+        <div class="box a">A：content-box</div>
+        <div class="box b">B：border-box</div>
+
+        <ul>
+            <li>A：内容宽 200px，边框盒宽 250px，加上左右 margin 共 270px。</li>
+            <li>B：内容宽 150px，边框盒宽 200px，加上左右 margin 共 220px。</li>
+        </ul>
+        <p>在 DevTools 的 Elements 中分别选中两个盒子，查看 Computed 里的盒模型图。</p>
+        <p>Console 中可用下面这行读取 A 的边框盒宽度；把 .a 改成 .b 可测量 B。结果不包含 margin。</p>
+        <pre><code>document.querySelector('.a').getBoundingClientRect().width</code></pre>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
