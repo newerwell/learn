@@ -145,6 +145,36 @@
             max-width: 100%;
             overflow-x: auto;
         }
+        /* D23 实验 1：三列、三行；1fr 表示分配一份可用空间 */
+        .grid-demo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 80px);
+            grid-auto-rows: 80px;
+            gap: 12px;
+        }
+
+        .grid-item {
+            box-sizing: border-box;
+            padding: 16px;
+            border: 1px solid #2563eb;
+            background: #dbeafe;
+        }
+
+        /* 实验 2：起始行线 / 起始列线 / 结束行线 / 结束列线。
+           只影响第二组；列线 1 到 3 覆盖两列，行线 1 到 2 覆盖一行。 */
+        .grid-span .featured {
+            grid-area: 1 / 1 / 2 / 3;
+            background: #fde68a;
+        }
+
+        /* 实验 3：每列至少 240px，列数随容器宽度变化。
+           取消基础实验的固定行高，让内容决定行高。 */
+        .grid-auto {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-rows: none;
+            grid-auto-rows: auto;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +188,7 @@
             <a href="#box-title">盒模型实验</a>
             <a href="#flex-title">Flex 实验</a>
             <a href="#cards-title">任务卡片</a>
+            <a href="#grid-title">Grid 实验</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -327,6 +358,56 @@
 
         <p>把浏览器视口缩到 375px，检查卡片是否变成一列、页面是否出现横向滚动条。</p>
         <p>向下滚动观察导航吸顶；再拉宽窗口，观察卡片换行和 16px 间距。</p>
+    </section>
+
+    <!-- D23：三个独立示例，方便直接比较基础网格、跨列和自适应布局 -->
+    <section aria-labelledby="grid-title">
+        <h2 id="grid-title">D23：Grid 二维布局实验</h2>
+        <p>Flex 擅长沿一个主轴排列元素；Grid 可以同时控制行和列。</p>
+
+        <h3>实验 1：3×3 网格</h3>
+        <p>三列等分可用空间，三行各高 80px，行列间距都是 12px。可把列定义改成 2fr 1fr 1fr，观察宽度变化。</p>
+        <div class="grid-demo">
+            <div class="grid-item">任务 1</div>
+            <div class="grid-item">任务 2</div>
+            <div class="grid-item">任务 3</div>
+            <div class="grid-item">任务 4</div>
+            <div class="grid-item">任务 5</div>
+            <div class="grid-item">任务 6</div>
+            <div class="grid-item">任务 7</div>
+            <div class="grid-item">任务 8</div>
+            <div class="grid-item">任务 9</div>
+        </div>
+
+        <h3>实验 2：第一张卡片跨两列</h3>
+        <p>黄色卡片使用 grid-area: 1 / 1 / 2 / 3，占据第一行的前两列。9 张卡片需要 10 格，所以会多出第四行。</p>
+        <div class="grid-demo grid-span">
+            <div class="grid-item featured">任务 1（跨两列）</div>
+            <div class="grid-item">任务 2</div>
+            <div class="grid-item">任务 3</div>
+            <div class="grid-item">任务 4</div>
+            <div class="grid-item">任务 5</div>
+            <div class="grid-item">任务 6</div>
+            <div class="grid-item">任务 7</div>
+            <div class="grid-item">任务 8</div>
+            <div class="grid-item">任务 9</div>
+        </div>
+
+        <h3>实验 3：自适应列数</h3>
+        <p>拉宽、缩窄浏览器：auto-fit 根据可用宽度安排列数，minmax(240px, 1fr) 让每列至少 240px，并分配剩余空间。</p>
+        <div class="grid-demo grid-auto">
+            <div class="grid-item">任务 1</div>
+            <div class="grid-item">任务 2</div>
+            <div class="grid-item">任务 3</div>
+            <div class="grid-item">任务 4</div>
+            <div class="grid-item">任务 5</div>
+            <div class="grid-item">任务 6</div>
+            <div class="grid-item">任务 7</div>
+            <div class="grid-item">任务 8</div>
+            <div class="grid-item">任务 9</div>
+        </div>
+        <p>容器宽度为 600px 时，两列的最小宽度加间距是 492px，三列需要 744px，因此会显示两列。</p>
+        <p>240px 是列宽下限，容器比它还窄时仍可能溢出。自适应示例没有跨列卡片，避免在单列时强制产生第二列。</p>
     </section>
 
     <aside aria-labelledby="tips">
