@@ -222,6 +222,21 @@
             overflow-wrap: anywhere;
         }
 
+        .dashboard-cover-frame {
+            margin: 0 0 1rem;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+
+        .dashboard-cover {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
         /* 内部导航跳转时，也给页面顶部的吸顶导航留出空间 */
         .dashboard [id] {
             scroll-margin-top: 12rem;
@@ -509,6 +524,14 @@
                     </article>
 
                     <article class="dashboard-card">
+                        <figure class="dashboard-cover-frame">
+                            <img
+                                class="dashboard-cover"
+                                src="assets/cover.jpg"
+                                alt="手机商品详情页截图"
+                                loading="lazy"
+                            >
+                        </figure>
                         <h4>CSS 布局</h4>
                         <p>练习盒模型、Flex 和 Grid。</p>
                     </article>
