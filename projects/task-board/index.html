@@ -278,6 +278,7 @@
             <a href="#dashboard-title">工作面板</a>
             <a href="#d30-title">D30 值与类型</a>
             <a href="#d31-title">D31 函数与闭包</a>
+            <a href="#d32-title">D32 数组方法</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -645,6 +646,73 @@ var square = memoize(n =&gt; {
 [square(5), square(5), squareCalls]  // [25, 25, 1]</code></pre>
         <p>这里的 <code>memoize</code> 示例针对单个参数：第一次计算后把参数和结果放进 <code>Map</code>，同一参数再次传入时直接取缓存。</p>
         <p>练习完成标准：能解释计数器结果和两个闭包保存的状态，并能说明 <code>once</code> 与 <code>memoize</code> 分别缓存了什么。</p>
+    </section>
+
+    <section aria-labelledby="d32-title">
+        <h2 id="d32-title">D32：数组方法</h2>
+        <p>先运行下面的数据准备代码，再把每个方法示例单独输入 Console。截止日期使用 ISO 格式（年-月-日），本练习以 2026-11-13 作为固定基准日。</p>
+
+        <h3>练习数据</h3>
+        <pre><code>var tasksD32 = [
+    { title: 'HTML 语义结构', status: 'done', dueDate: '2026-11-10' },
+    { title: '数组练习', status: 'doing', dueDate: '2026-11-12' },
+    { title: '表单校验', status: 'todo', dueDate: '2026-11-13' },
+    { title: '闭包练习', status: 'todo', dueDate: '2026-11-18' },
+    { title: '页面复盘', status: 'done', dueDate: '2026-11-15' }
+];
+var todayD32 = '2026-11-13';</code></pre>
+
+        <h3>方法速查</h3>
+        <ul>
+            <li><code>map</code>：返回逐项转换后的新数组，适合提取标题或生成新数据。</li>
+            <li><code>filter</code>：返回符合条件的新数组，适合筛选。</li>
+            <li><code>reduce</code>：把数组累计成一个结果，适合分组、求和等。</li>
+            <li><code>find</code>：返回第一个符合条件的元素；找不到时返回 <code>undefined</code>。</li>
+            <li><code>some</code>：返回布尔值，判断是否至少有一项符合条件。</li>
+            <li><code>every</code>：返回布尔值，判断是否每一项都符合条件。</li>
+            <li><code>sort</code>：原地排序并返回同一个数组；比较函数决定排序规则。</li>
+        </ul>
+
+        <h3>逐项练习</h3>
+        <p>提取标题，<code>map</code> 返回新数组：</p>
+        <pre><code>tasksD32.map(task =&gt; task.title)
+// ['HTML 语义结构', '数组练习', '表单校验', '闭包练习', '页面复盘']</code></pre>
+
+        <p>筛出未完成任务，<code>filter</code> 保留满足条件的项目：</p>
+        <pre><code>tasksD32.filter(task =&gt; task.status !== 'done').map(task =&gt; task.title)
+// ['数组练习', '表单校验', '闭包练习']</code></pre>
+
+        <p>用 <code>reduce</code> 按状态分组。累加器 <code>groups</code> 是新建的对象：</p>
+        <pre><code>tasksD32.reduce((groups, task) =&gt; {
+    if (!groups[task.status]) groups[task.status] = [];
+    groups[task.status].push(task.title);
+    return groups;
+}, {})
+// { done: ['HTML 语义结构', '页面复盘'],
+//   doing: ['数组练习'],
+//   todo: ['表单校验', '闭包练习'] }</code></pre>
+
+        <p>计算完成率：完成数除以总数，空数组时按 0% 处理：</p>
+        <pre><code>tasksD32.length === 0 ? 0 : Math.round(
+    tasksD32.filter(task =&gt; task.status === 'done').length / tasksD32.length * 100
+)
+// 40</code></pre>
+
+        <p>找第一条已超期且未完成的任务；没有时显示默认文本：</p>
+        <pre><code>tasksD32.find(task =&gt; task.status !== 'done' &amp;&amp; task.dueDate &lt; todayD32)?.title ?? '没有超期任务'
+// '数组练习'</code></pre>
+
+        <p>检查是否存在未完成任务，以及是否全部完成：</p>
+        <pre><code>tasksD32.some(task =&gt; task.status !== 'done')  // true
+tasksD32.every(task =&gt; task.status === 'done') // false</code></pre>
+
+        <p>按截止日期升序排列。<code>sort</code> 会修改调用它的数组，所以先用展开语法复制：</p>
+        <pre><code>[...tasksD32]
+    .sort((a, b) =&gt; Date.parse(a.dueDate) - Date.parse(b.dueDate))
+    .map(task =&gt; task.title)
+// ['HTML 语义结构', '数组练习', '表单校验', '页面复盘', '闭包练习']</code></pre>
+
+        <p>完成标准：能说明每个方法返回什么、适合什么场景；能用 <code>reduce</code> 分组；知道 <code>sort</code> 会修改原数组，并能提供比较函数。</p>
     </section>
 
     <aside aria-labelledby="tips">
