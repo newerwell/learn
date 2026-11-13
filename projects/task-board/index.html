@@ -378,6 +378,7 @@
             <a href="#d39-title">D39 Promise</a>
             <a href="#d40-title">D40 async/await</a>
             <a href="#d41-title">D41 防抖节流</a>
+            <a href="#d42-title">D42 小应用整合</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1324,6 +1325,16 @@ scrollArea.addEventListener('scroll', () =&gt; {
     activeRequestController?.abort();
 });</code></pre>
         <p>防抖适合搜索、自动保存：一串连续操作结束后再执行一次。节流适合滚动、缩放：操作持续时按固定频率执行。新输入要 <code>clearTimeout</code>；页面离开时也应清理定时器，并取消还在进行的请求。</p>
+    </section>
+
+    <section aria-labelledby="d42-title">
+        <h2 id="d42-title">D42：小应用整合</h2>
+        <p>把列表渲染、防抖搜索、加载与结果状态、搜索历史和错误重试组合成一个能实际使用的小应用。</p>
+        <p><a href="search-app/index.html">打开 GitHub 开源仓库搜索应用</a></p>
+        <ul>
+            <li>搜索历史保存在浏览器中，刷新后仍可使用。</li>
+            <li>无匹配结果会显示空状态；网络错误可以在页面内重试。</li>
+        </ul>
     </section>
 
     <aside aria-labelledby="tips">

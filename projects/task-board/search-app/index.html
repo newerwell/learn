@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="使用 GitHub 公开 API 搜索开源仓库，练习防抖、请求状态和本地搜索历史。">
+    <title>开源仓库搜索 · D42</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <main class="page-shell">
+        <header class="hero">
+            <a class="back-link" href="../index.html#d42-title">← 返回学习看板</a>
+            <p class="eyebrow">阶段 1 · D42 小应用整合</p>
+            <h1>发现开源项目</h1>
+            <p class="hero-copy">输入关键词，搜索 GitHub 上的公开仓库。停下输入后会自动搜索。</p>
+        </header>
+
+        <section class="search-panel" aria-labelledby="search-heading">
+            <h2 id="search-heading">搜索仓库</h2>
+            <form id="search-form" role="search">
+                <label for="search-input">仓库关键词</label>
+                <div class="search-row">
+                    <input id="search-input" name="q" type="search" maxlength="200" autocomplete="off" placeholder="例如：react、vite、机器学习">
+                    <button class="search-button" type="submit">搜索</button>
+                </div>
+                <p class="input-hint">输入后约半秒自动搜索，也可以按 Enter。搜索使用 GitHub 公开数据。</p>
+            </form>
+
+            <div class="history-heading">
+                <h3>最近搜索</h3>
+                <button id="clear-history" class="text-button" type="button">清空</button>
+            </div>
+            <p id="history-empty" class="history-empty">搜索过的关键词会保存在这台设备上。</p>
+            <ul id="history-list" class="history-list" aria-label="最近搜索关键词"></ul>
+            <p id="history-note" class="history-note" role="status"></p>
+        </section>
+
+        <section class="results-panel" aria-labelledby="results-heading">
+            <div class="results-heading-row">
+                <h2 id="results-heading">搜索结果</h2>
+                <p id="results-summary" class="results-summary"></p>
+            </div>
+            <div id="status-panel" class="status-panel" data-state="idle" role="status" aria-live="polite" aria-atomic="true">
+                <span class="status-mark" aria-hidden="true">⌕</span>
+                <p>输入关键词，开始寻找有趣的开源项目。</p>
+            </div>
+            <ul id="result-list" class="result-list" aria-label="GitHub 仓库搜索结果"></ul>
+        </section>
+
+        <footer class="page-footer">
+            <p>练习内容：防抖搜索 · Fetch API · 四种请求状态 · localStorage · 错误重试</p>
+        </footer>
+    </main>
+</body>
+</html>
