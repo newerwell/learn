@@ -317,6 +317,15 @@
             min-height: 1.4em;
             color: #b91c1c;
         }
+
+        .d39-demo-output {
+            max-height: 16rem;
+            overflow: auto;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
@@ -340,6 +349,7 @@
             <a href="#d36-title">D36 复盘自测</a>
             <a href="#d37-title">D37 DOM 事件</a>
             <a href="#d38-title">D38 事件委托</a>
+            <a href="#d39-title">D39 Promise</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1152,6 +1162,67 @@ form.addEventListener('submit', event =&gt; {
         <p>每个错误提示都通过 <code>aria-describedby</code> 关联到输入框；校验时同步设置 <code>aria-invalid</code>。提交监听器调用 <code>preventDefault()</code>，因此练习不会向服务器发送数据。</p>
     </section>
 
+    <section aria-labelledby="d39-title">
+        <h2 id="d39-title">D39：Promise</h2>
+        <p>在本地预览地址或 GitHub Pages 上运行本节练习。两个 JSON 文件是同源静态接口；不要用 <code>file://</code> 打开，否则浏览器会限制 <code>fetch</code>。</p>
+
+        <h3>delay(ms)：把定时器包装成 Promise</h3>
+        <pre><code>function delayD39(ms) {
+    return new Promise(resolve =&gt; {
+        setTimeout(resolve, ms);
+    });
+}
+delayD39(300).then(() =&gt; console.log('300 毫秒后完成'));</code></pre>
+
+        <h3>then 链与微任务顺序</h3>
+        <pre><code>console.log('同步 1');
+Promise.resolve('A')
+    .then(value =&gt; {
+        console.log('then 1', value);
+        return 'B';
+    })
+    .then(value =&gt; console.log('then 2', value));
+console.log('同步 2');
+// 顺序：同步 1 → 同步 2 → then 1 A → then 2 B</code></pre>
+        <p><code>then</code> 回调进入微任务队列；当前同步代码先执行完，再按队列顺序执行 Promise 回调。后一个 <code>then</code> 接收前一个回调返回的值。</p>
+        <button id="d39-run-order" type="button">运行顺序演示</button>
+        <pre id="d39-order-output" class="d39-demo-output" aria-live="polite">点击按钮查看实际顺序</pre>
+
+        <h3>Promise.all 并发请求两个本地接口</h3>
+        <p>下面两个请求在同一个 <code>Promise.all</code> 调用前就已启动；结果按传入顺序返回。任意一个请求失败，整个 <code>Promise.all</code> 就会失败。</p>
+        <pre><code>Promise.all([
+    fetch('./data/d39-tasks.json').then(response =&gt; response.json()),
+    fetch('./data/d39-tip.json').then(response =&gt; response.json())
+]).then(([tasks, tip]) =&gt; console.log(tasks, tip));</code></pre>
+        <button id="d39-fetch-pair" type="button">并发读取两个 JSON 接口</button>
+        <pre id="d39-fetch-output" class="d39-demo-output" aria-live="polite">点击后读取任务数据和学习提示</pre>
+
+        <h3>Promise.all 与 Promise.allSettled</h3>
+        <p><code>all</code> 遇到一个拒绝就整体拒绝；<code>allSettled</code> 会等所有 Promise 完成，并分别报告状态。</p>
+        <div>
+            <button id="d39-run-all" type="button">运行 Promise.all</button>
+            <button id="d39-run-settled" type="button">运行 Promise.allSettled</button>
+        </div>
+        <pre id="d39-all-output" class="d39-demo-output" aria-live="polite">分别运行两个按钮，对比输出</pre>
+
+        <h3>Promise.race 做超时竞速</h3>
+        <p><code>race</code> 采用最先完成的结果。下面较慢的请求需要 900ms，超时 Promise 在 300ms 拒绝，所以输出超时错误。</p>
+        <pre><code>const request = delayD39(900).then(() =&gt; '请求完成');
+const timeout = new Promise((resolve, reject) =&gt; {
+    setTimeout(() =&gt; reject(new Error('请求超时')), 300);
+});
+Promise.race([request, timeout]).catch(error =&gt; console.log(error.message));</code></pre>
+        <button id="d39-run-race" type="button">运行 300ms 超时演示</button>
+        <pre id="d39-race-output" class="d39-demo-output" aria-live="polite">点击运行竞速</pre>
+
+        <h3>async 函数返回什么？</h3>
+        <pre><code>async function getValueD39() {
+    return 42;
+}
+getValueD39() instanceof Promise;  // true</code></pre>
+        <p>完成标准：能画出同步代码与 <code>then</code> 微任务的先后顺序；能解释 <code>Promise.all</code> 的失败传播；知道 <code>allSettled</code> 会保留每项状态，<code>race</code> 取最先完成者，而 <code>async</code> 函数总会返回 Promise。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -1390,6 +1461,98 @@ form.addEventListener('submit', event =&gt; {
                     ? '校验通过；这是本地练习，没有发送数据。'
                     : '请修正上方标出的字段后再提交。';
                 fieldsD38.find(field => field.input.getAttribute('aria-invalid') === 'true')?.input.focus();
+            });
+        })();
+
+        (() => {
+            const orderButtonD39 = document.querySelector('#d39-run-order');
+            const orderOutputD39 = document.querySelector('#d39-order-output');
+            const fetchButtonD39 = document.querySelector('#d39-fetch-pair');
+            const fetchOutputD39 = document.querySelector('#d39-fetch-output');
+            const allButtonD39 = document.querySelector('#d39-run-all');
+            const settledButtonD39 = document.querySelector('#d39-run-settled');
+            const allOutputD39 = document.querySelector('#d39-all-output');
+            const raceButtonD39 = document.querySelector('#d39-run-race');
+            const raceOutputD39 = document.querySelector('#d39-race-output');
+            if (!orderButtonD39 || !orderOutputD39 || !fetchButtonD39 || !fetchOutputD39 || !allButtonD39 || !settledButtonD39 || !allOutputD39 || !raceButtonD39 || !raceOutputD39) return;
+
+            const delayD39 = (ms, value) => new Promise(resolve => setTimeout(resolve, ms, value));
+            const readJsonD39 = async path => {
+                const response = await fetch(path);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            };
+            const makeMixedJobsD39 = () => [
+                delayD39(350, '接口 A 成功'),
+                delayD39(150).then(() => { throw new Error('接口 B 失败'); })
+            ];
+
+            orderButtonD39.addEventListener('click', () => {
+                const lines = [];
+                const write = line => {
+                    lines.push(line);
+                    orderOutputD39.textContent = lines.join('\n');
+                };
+                orderButtonD39.disabled = true;
+                write('同步：开始');
+                Promise.resolve().then(() => write('微任务：then 回调'));
+                setTimeout(() => {
+                    write('定时器任务：setTimeout 回调');
+                    orderButtonD39.disabled = false;
+                }, 0);
+                write('同步：结束');
+            });
+
+            fetchButtonD39.addEventListener('click', async () => {
+                fetchButtonD39.disabled = true;
+                fetchOutputD39.textContent = '两个请求正在并发中…';
+                try {
+                    const [tasks, tip] = await Promise.all([
+                        readJsonD39('./data/d39-tasks.json'),
+                        readJsonD39('./data/d39-tip.json')
+                    ]);
+                    fetchOutputD39.textContent = JSON.stringify({ tasks, tip }, null, 2);
+                } catch (error) {
+                    fetchOutputD39.textContent = `请求失败：${error.message}`;
+                } finally {
+                    fetchButtonD39.disabled = false;
+                }
+            });
+
+            allButtonD39.addEventListener('click', () => {
+                allButtonD39.disabled = true;
+                allOutputD39.textContent = 'Promise.all 等待两个请求…';
+                Promise.all(makeMixedJobsD39())
+                    .then(results => { allOutputD39.textContent = JSON.stringify(results, null, 2); })
+                    .catch(error => { allOutputD39.textContent = `Promise.all 整体拒绝：${error.message}`; })
+                    .finally(() => { allButtonD39.disabled = false; });
+            });
+
+            settledButtonD39.addEventListener('click', () => {
+                settledButtonD39.disabled = true;
+                allOutputD39.textContent = 'Promise.allSettled 等待所有结果…';
+                Promise.allSettled(makeMixedJobsD39())
+                    .then(results => {
+                        allOutputD39.textContent = JSON.stringify(results.map(result => ({
+                            status: result.status,
+                            value: result.status === 'fulfilled' ? result.value : undefined,
+                            reason: result.status === 'rejected' ? result.reason.message : undefined
+                        })), null, 2);
+                    })
+                    .finally(() => { settledButtonD39.disabled = false; });
+            });
+
+            raceButtonD39.addEventListener('click', () => {
+                raceButtonD39.disabled = true;
+                raceOutputD39.textContent = '慢请求与 300ms 超时正在竞速…';
+                const request = delayD39(900, '请求完成');
+                const timeout = new Promise((resolve, reject) => {
+                    setTimeout(() => reject(new Error('请求超时')), 300);
+                });
+                Promise.race([request, timeout])
+                    .then(value => { raceOutputD39.textContent = value; })
+                    .catch(error => { raceOutputD39.textContent = error.message; })
+                    .finally(() => { raceButtonD39.disabled = false; });
             });
         })();
     </script>

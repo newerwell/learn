@@ -1,0 +1,4 @@
+{
+  "source": "tip endpoint",
+  "text": "Promise.all 按输入顺序返回结果，不代表请求按顺序完成。"
+}
