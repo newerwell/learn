@@ -290,6 +290,19 @@
             max-width: 100%;
             width: 100%;
         }
+
+        .d37-event-parent {
+            display: grid;
+            gap: 10px;
+            padding: 16px;
+            border: 2px dashed #2563eb;
+            border-radius: 8px;
+        }
+
+        .d37-event-log {
+            max-height: 14rem;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
@@ -311,6 +324,7 @@
             <a href="#d33-title">D33 对象与拷贝</a>
             <a href="#d35-title">D35 作用域与 this</a>
             <a href="#d36-title">D36 复盘自测</a>
+            <a href="#d37-title">D37 DOM 事件</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1045,6 +1059,39 @@ var deep = structuredClone(original);</code></pre>
         </section>
     </section>
 
+    <section aria-labelledby="d37-title">
+        <h2 id="d37-title">D37：DOM 事件与传播</h2>
+        <p>点击普通子按钮，观察捕获阶段和冒泡阶段的日志；也可以点文字中的“点我”，对比 <code>event.target</code> 与 <code>event.currentTarget</code>。</p>
+
+        <div id="d37-parent" class="d37-event-parent">
+            <strong>父元素</strong>
+            <button id="d37-child" type="button"><span id="d37-child-label">点我：普通子按钮</span></button>
+            <a id="d37-link" href="#d37-link-target">点这里：preventDefault 阻止链接跳转</a>
+            <button id="d37-stop" type="button">点这里：stopPropagation 停止后续传播</button>
+        </div>
+        <p id="d37-link-target">这是链接默认跳转的目标位置。</p>
+        <button id="d37-clear" type="button">清空事件记录</button>
+        <ol id="d37-log" class="d37-event-log" aria-live="polite"></ol>
+
+        <h3>传播顺序</h3>
+        <ul>
+            <li>捕获：从外层父元素向目标元素走。</li>
+            <li>目标：事件到达实际触发事件的元素。</li>
+            <li>冒泡：从目标元素向外层父元素返回。</li>
+        </ul>
+        <p>普通子按钮的顺序是“父捕获 → 子目标 → 父冒泡”。日志同时写入页面和 Console，并记录传播阶段。</p>
+
+        <h3>target 与 currentTarget</h3>
+        <p><code>event.target</code> 是最初触发事件的元素；<code>event.currentTarget</code> 是当前正在执行监听器的元素。点按钮里的文字时，目标可能是内部 <code>span</code>，而按钮监听器的 <code>currentTarget</code> 是按钮。</p>
+
+        <h3>preventDefault 与 stopPropagation</h3>
+        <ul>
+            <li>点链接：<code>preventDefault()</code> 阻止浏览器跳转，但父元素仍会收到事件并记录冒泡。</li>
+            <li>点 stopPropagation 按钮：捕获监听器先运行，按钮监听器调用 <code>stopPropagation()</code> 后，父元素的冒泡监听器不会运行。</li>
+        </ul>
+        <p>它们作用不同：一个取消浏览器默认动作，一个停止事件继续传播。练习标准：能说出捕获与冒泡方向、区分 <code>target/currentTarget</code>，并解释两个方法各自阻止什么。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -1142,6 +1189,46 @@ var deep = structuredClone(original);</code></pre>
                     wrongAnswersD36.append(listItem);
                 }
             });
+        })();
+
+        (() => {
+            const parentD37 = document.querySelector('#d37-parent');
+            const childD37 = document.querySelector('#d37-child');
+            const linkD37 = document.querySelector('#d37-link');
+            const stopButtonD37 = document.querySelector('#d37-stop');
+            const clearButtonD37 = document.querySelector('#d37-clear');
+            const logD37 = document.querySelector('#d37-log');
+            if (!parentD37 || !childD37 || !linkD37 || !stopButtonD37 || !clearButtonD37 || !logD37) return;
+
+            const recordD37 = (label, event) => {
+                const targetName = event.target.id ? `#${event.target.id}` : event.target.tagName.toLowerCase();
+                const currentName = event.currentTarget.id ? `#${event.currentTarget.id}` : event.currentTarget.tagName.toLowerCase();
+                const phaseName = ['none', 'capture', 'target', 'bubble'][event.eventPhase];
+                const item = document.createElement('li');
+                item.textContent = `${label} | target=${targetName} | currentTarget=${currentName} | phase=${phaseName}`;
+                logD37.append(item);
+                console.log(`D37 ${label}`, {
+                    target: event.target,
+                    currentTarget: event.currentTarget,
+                    eventPhase: event.eventPhase
+                });
+            };
+
+            parentD37.addEventListener('click', event => recordD37('父捕获', event), true);
+            childD37.addEventListener('click', event => recordD37(
+                event.target === childD37 ? '子目标' : '子监听器（内部元素冒泡）',
+                event
+            ));
+            linkD37.addEventListener('click', event => {
+                event.preventDefault();
+                recordD37('链接取消默认跳转', event);
+            });
+            stopButtonD37.addEventListener('click', event => {
+                recordD37('子按钮调用 stopPropagation', event);
+                event.stopPropagation();
+            });
+            parentD37.addEventListener('click', event => recordD37('父冒泡', event));
+            clearButtonD37.addEventListener('click', () => logD37.replaceChildren());
         })();
     </script>
 </body>
