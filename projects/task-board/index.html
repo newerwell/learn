@@ -275,6 +275,21 @@
         .d34-list-frame li {
             margin: 6px 0;
         }
+
+        .d36-question {
+            margin: 16px 0;
+        }
+
+        .d36-question label {
+            display: block;
+            margin: 6px 0;
+        }
+
+        #d36-reflection {
+            box-sizing: border-box;
+            max-width: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -295,6 +310,7 @@
             <a href="#d32-title">D32 数组方法</a>
             <a href="#d33-title">D33 对象与拷贝</a>
             <a href="#d35-title">D35 作用域与 this</a>
+            <a href="#d36-title">D36 复盘自测</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -921,6 +937,114 @@ setTimeout(timerObjD35.checkThis.bind(timerObjD35), 100);  // true</code></pre>
         <p>完成标准：能说出箭头函数的 <code>this</code> 由定义位置决定，并能解释和修复定时器回调里的上下文丢失。</p>
     </section>
 
+    <section aria-labelledby="d36-title">
+        <h2 id="d36-title">D36：D30–D35 闭卷复盘</h2>
+        <p>不看前面的课程内容，独立完成 10 题。覆盖值与类型 2 题、闭包 2 题、数组方法 2 题、拷贝 1 题、<code>this</code> 2 题、XSS 1 题。提交前不会显示答案；8 题及以上正确为通过。</p>
+
+        <form id="d36-quiz">
+            <fieldset class="d36-question">
+                <legend>1. 这两个表达式的结果分别是什么？</legend>
+                <pre><code>1 == '1'
+1 === '1'</code></pre>
+                <label><input type="radio" name="d36-q1" value="A"> A. true，true</label>
+                <label><input type="radio" name="d36-q1" value="B"> B. true，false</label>
+                <label><input type="radio" name="d36-q1" value="C"> C. false，true</label>
+                <label><input type="radio" name="d36-q1" value="D"> D. false，false</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>2. <code>NaN === NaN</code> 的结果是什么？</legend>
+                <label><input type="radio" name="d36-q2" value="A"> A. true，因为两边都是 NaN</label>
+                <label><input type="radio" name="d36-q2" value="B"> B. false，NaN 与任何值比较都不相等</label>
+                <label><input type="radio" name="d36-q2" value="C"> C. undefined</label>
+                <label><input type="radio" name="d36-q2" value="D"> D. 会抛出语法错误</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>3. 下面最后一个表达式会得到什么？</legend>
+                <pre><code>function counter() { let n = 0; return () =&gt; ++n; }
+var c1 = counter();
+var c2 = counter();
+[c1(), c1(), c2()]</code></pre>
+                <label><input type="radio" name="d36-q3" value="A"> A. [1, 2, 1]</label>
+                <label><input type="radio" name="d36-q3" value="B"> B. [1, 2, 3]</label>
+                <label><input type="radio" name="d36-q3" value="C"> C. [0, 1, 0]</label>
+                <label><input type="radio" name="d36-q3" value="D"> D. [1, 1, 1]</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>4. 为什么 <code>counter</code> 返回的函数还能继续读写 <code>n</code>？</legend>
+                <label><input type="radio" name="d36-q4" value="A"> A. JavaScript 把 n 的数值复制进了函数名</label>
+                <label><input type="radio" name="d36-q4" value="B"> B. 闭包通过作用域链访问创建它时的词法环境</label>
+                <label><input type="radio" name="d36-q4" value="C"> C. return 会自动把局部变量变成全局变量</label>
+                <label><input type="radio" name="d36-q4" value="D"> D. 所有 let 变量都会永久保存在内存中</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>5. <code>map</code> 最适合做什么？</legend>
+                <label><input type="radio" name="d36-q5" value="A"> A. 找第一个符合条件的元素</label>
+                <label><input type="radio" name="d36-q5" value="B"> B. 把数组逐项转换成一个新数组</label>
+                <label><input type="radio" name="d36-q5" value="C"> C. 判断是否所有元素都符合条件</label>
+                <label><input type="radio" name="d36-q5" value="D"> D. 原地删除所有不符合条件的元素</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>6. 想按日期排序但保留原数组，应该怎么写？</legend>
+                <label><input type="radio" name="d36-q6" value="A"> A. <code>tasks.sort(compareDates)</code></label>
+                <label><input type="radio" name="d36-q6" value="B"> B. <code>tasks.filter(compareDates)</code></label>
+                <label><input type="radio" name="d36-q6" value="C"> C. <code>[...tasks].sort(compareDates)</code></label>
+                <label><input type="radio" name="d36-q6" value="D"> D. <code>tasks.map(compareDates)</code></label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>7. 浅拷贝和深拷贝对嵌套数据有什么不同？</legend>
+                <pre><code>var shallow = { ...original };
+var deep = structuredClone(original);</code></pre>
+                <label><input type="radio" name="d36-q7" value="A"> A. 两种拷贝都与原对象完全独立</label>
+                <label><input type="radio" name="d36-q7" value="B"> B. 浅拷贝会共享嵌套对象；深拷贝会复制支持的嵌套数据</label>
+                <label><input type="radio" name="d36-q7" value="C"> C. 深拷贝会共享嵌套对象；浅拷贝不会</label>
+                <label><input type="radio" name="d36-q7" value="D"> D. 两种写法都会修改原对象</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>8. 箭头函数的 <code>this</code> 由什么决定？</legend>
+                <label><input type="radio" name="d36-q8" value="A"> A. 调用它时点号左边的对象</label>
+                <label><input type="radio" name="d36-q8" value="B"> B. 最后一次调用它的对象</label>
+                <label><input type="radio" name="d36-q8" value="C"> C. 定义位置的外层词法作用域</label>
+                <label><input type="radio" name="d36-q8" value="D"> D. 总是 undefined</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>9. 怎样让定时器回调继续使用对象作为 <code>this</code>？</legend>
+                <pre><code>setTimeout(task.show, 100);</code></pre>
+                <label><input type="radio" name="d36-q9" value="A"> A. <code>setTimeout(task.show.bind(task), 100)</code></label>
+                <label><input type="radio" name="d36-q9" value="B"> B. <code>setTimeout(task.show, task)</code></label>
+                <label><input type="radio" name="d36-q9" value="C"> C. 把方法改名为 <code>this</code></label>
+                <label><input type="radio" name="d36-q9" value="D"> D. 定时器会自动保留原对象，不用修改</label>
+            </fieldset>
+
+            <fieldset class="d36-question">
+                <legend>10. 把用户输入的标题插入列表时，哪种方式更安全？</legend>
+                <label><input type="radio" name="d36-q10" value="A"> A. 创建 <code>li</code>，再用 <code>li.textContent = title</code></label>
+                <label><input type="radio" name="d36-q10" value="B"> B. 用字符串拼接后赋给 <code>list.innerHTML</code></label>
+                <label><input type="radio" name="d36-q10" value="C"> C. 把输入内容放进 <code>onclick</code> 属性</label>
+                <label><input type="radio" name="d36-q10" value="D"> D. 用 <code>eval(title)</code> 生成列表</label>
+            </fieldset>
+
+            <button type="submit">提交并查看解析</button>
+        </form>
+
+        <p id="d36-score" aria-live="polite">尚未提交</p>
+        <section id="d36-review" aria-labelledby="d36-review-title" hidden>
+            <h3 id="d36-review-title">错题解析</h3>
+            <p id="d36-review-status"></p>
+            <ol id="d36-wrong-answers"></ol>
+            <label for="d36-reflection">把错题记进笔记：“我当时以为……实际上……”</label>
+            <textarea id="d36-reflection" rows="4" placeholder="我当时以为……，实际上……"></textarea>
+            <p>复盘内容需要复制到你的学习笔记中保存；刷新页面不会保留此输入。</p>
+        </section>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -962,6 +1086,61 @@ setTimeout(timerObjD35.checkThis.bind(timerObjD35), 100);  // true</code></pre>
 
             buttonD35.addEventListener('click', function (event) {
                 outputD35.textContent = `this === event.currentTarget：${this === event.currentTarget}`;
+            });
+        })();
+
+        (() => {
+            const quizD36 = document.querySelector('#d36-quiz');
+            const scoreD36 = document.querySelector('#d36-score');
+            const reviewD36 = document.querySelector('#d36-review');
+            const reviewStatusD36 = document.querySelector('#d36-review-status');
+            const wrongAnswersD36 = document.querySelector('#d36-wrong-answers');
+            if (!quizD36 || !scoreD36 || !reviewD36 || !reviewStatusD36 || !wrongAnswersD36) return;
+
+            const answerKeyD36 = [
+                { question: 1, name: 'd36-q1', answer: 'B', explanation: '== 会进行类型转换；=== 不转换类型。' },
+                { question: 2, name: 'd36-q2', answer: 'B', explanation: 'NaN 与自己也不相等；需要检测时使用 Number.isNaN。' },
+                { question: 3, name: 'd36-q3', answer: 'A', explanation: 'c1 的 n 从 0 变成 1、2；c2 有独立的 n，从 0 变成 1。' },
+                { question: 4, name: 'd36-q4', answer: 'B', explanation: '闭包保留对外层词法环境的访问，所以 n 在返回后仍可用。' },
+                { question: 5, name: 'd36-q5', answer: 'B', explanation: 'map 对每项运行转换函数并返回新数组。' },
+                { question: 6, name: 'd36-q6', answer: 'C', explanation: 'sort 会修改被排序数组；先复制再排序可以保留 tasks 原顺序。' },
+                { question: 7, name: 'd36-q7', answer: 'B', explanation: '展开语法只复制外层；structuredClone 会复制支持的嵌套数据。' },
+                { question: 8, name: 'd36-q8', answer: 'C', explanation: '箭头函数没有自己的 this，从定义位置的外层词法作用域取得。' },
+                { question: 9, name: 'd36-q9', answer: 'A', explanation: 'bind 返回绑定了 task 作为 this 的新函数。' },
+                { question: 10, name: 'd36-q10', answer: 'A', explanation: 'textContent 把输入作为文字；innerHTML 会解析标签和事件属性，可能导致 XSS。' }
+            ];
+
+            quizD36.addEventListener('submit', event => {
+                event.preventDefault();
+                let score = 0;
+                const wrongItems = [];
+
+                for (const question of answerKeyD36) {
+                    const selected = quizD36.querySelector(`input[name="${question.name}"]:checked`);
+                    if (selected && selected.value === question.answer) {
+                        score += 1;
+                        continue;
+                    }
+                    wrongItems.push({ question, selected });
+                }
+
+                scoreD36.textContent = `得分：${score}/10。${score >= 8 ? '通过复盘标准。' : '还未达到 8 题，请查看错题并再练一次。'}`;
+                wrongAnswersD36.replaceChildren();
+                reviewD36.hidden = false;
+                reviewStatusD36.textContent = wrongItems.length === 0
+                    ? '全部答对，做得很好。'
+                    : `共 ${wrongItems.length} 道错题（未作答也计为错题）：`;
+
+                for (const item of wrongItems) {
+                    const listItem = document.createElement('li');
+                    const selectedText = item.selected
+                        ? item.selected.parentElement.textContent.trim()
+                        : '未作答';
+                    const correctInput = quizD36.querySelector(`input[name="${item.question.name}"][value="${item.question.answer}"]`);
+                    const correctText = correctInput.parentElement.textContent.trim();
+                    listItem.textContent = `第 ${item.question.question} 题：你选了 ${selectedText}；正确答案是 ${correctText}。${item.question.explanation}`;
+                    wrongAnswersD36.append(listItem);
+                }
             });
         })();
     </script>
