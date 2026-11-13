@@ -383,6 +383,7 @@
             <a href="#d44-title">D44 基础类型</a>
             <a href="#d45-title">D45 泛型</a>
             <a href="#d46-title">D46 类型收窄</a>
+            <a href="#d47-title">D47 工具类型</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1452,6 +1453,25 @@ function assertNever(value: never): never {
         <p>当 <code>switch</code> 已处理联合类型的所有分支时，<code>default</code> 中的值会收窄为 <code>never</code>。以后给联合类型增加新分支但忘记处理，编译器就会在穷尽检查处报错。</p>
         <p>源码 <code>src/d46-narrowing.ts</code> 包含字符串/对象响应解析和 <code>never</code> 穷尽检查；<code>src/d46-type-check.ts</code> 展示未收窄的 <code>unknown</code> 会被拒绝。</p>
         <p><a href="search-app/src/d46-narrowing.ts">查看类型守卫实现</a></p>
+    </section>
+
+    <section aria-labelledby="d47-title">
+        <h2 id="d47-title">D47：工具类型</h2>
+        <p>从 D44 的 <code>Task</code> 实体派生创建 DTO、更新 DTO、列表项和索引类型，减少重复维护字段。</p>
+        <pre><code>type CreateTaskDto = Omit&lt;Task, 'id' | 'done'&gt;;
+type UpdateTaskDto = Partial&lt;Omit&lt;Task, 'id'&gt;&gt;;
+type TaskListItem = Pick&lt;Task, 'id' | 'title' | 'done'&gt;;
+type TaskField = keyof Task;
+type TaskIndex = Record&lt;Task['id'], Task&gt;;
+type CreatedTask = ReturnType&lt;typeof createTask&gt;;</code></pre>
+        <ul>
+            <li><code>Pick</code> 选出需要公开的字段；<code>Omit</code> 从实体中排除字段。创建时排除自动生成的 <code>id</code> 和 <code>done</code>；更新时只排除不可修改的 <code>id</code>。</li>
+            <li><code>Partial</code> 把更新 DTO 的剩余字段变成可选。实体新增字段后，创建 DTO 和更新 DTO 会跟着派生，不必重抄字段。</li>
+            <li><code>keyof Task</code> 得到任务字段名的联合类型；<code>Record</code> 用它约束完整的字段标签映射。</li>
+            <li><code>ReturnType&lt;typeof createTask&gt;</code> 表示提取 <code>createTask</code> 函数的返回类型。</li>
+        </ul>
+        <p><code>TaskListItem</code> 使用 <code>Pick</code> 明确选择列表展示字段；实体字段变化时，检查这个列表是否也应该展示新字段。示例与派生类型位于 <code>src/d47-derived-types.ts</code>。</p>
+        <p><a href="search-app/src/d47-derived-types.ts">查看工具类型示例</a></p>
     </section>
 
     <aside aria-labelledby="tips">
