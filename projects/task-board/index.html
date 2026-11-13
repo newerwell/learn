@@ -381,6 +381,7 @@
             <a href="#d42-title">D42 小应用整合</a>
             <a href="#d43-title">D43 TS 环境</a>
             <a href="#d44-title">D44 基础类型</a>
+            <a href="#d45-title">D45 泛型</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1406,6 +1407,23 @@ interface RequiredDueDate {
 }</code></pre>
         <p>在 <code>src/d44-type-check.ts</code> 里有一条被 <code>@ts-expect-error</code> 标记的错误示例。删除这行标记并运行 <code>pnpm typecheck</code>，就能看到 <code>title</code> 传入数字时的类型报错；恢复标记后，编译器会检查这条错误是否仍然存在。</p>
         <p><a href="search-app/src/task-model.ts">查看任务 model 实现</a></p>
+    </section>
+
+    <section aria-labelledby="d45-title">
+        <h2 id="d45-title">D45：泛型入门</h2>
+        <p><code>groupBy</code> 按任务的某个字段分组，并保留每组元素的 <code>Task</code> 类型：</p>
+        <pre><code>function groupBy&lt;T, K extends keyof T&gt;(
+    items: T[],
+    key: K
+): Record&lt;string, T[]&gt;</code></pre>
+        <pre><code>const tasksByDone = groupBy(tasks, 'done');
+const completed = tasksByDone.true ?? [];</code></pre>
+        <p>调用时 TypeScript 从 <code>tasks</code> 推断 <code>T</code> 为 <code>Task</code>，从 <code>'done'</code> 推断 <code>K</code> 为 <code>'done'</code>，所以不需要手写泛型参数。分组键会转换成字符串，例如布尔值 <code>true</code> 对应属性名 <code>"true"</code>。</p>
+
+        <h3>为什么比 any 安全？</h3>
+        <p><code>T</code> 让输入元素和输出分组里的元素保持同一种类型；<code>K extends keyof T</code> 把字段名限制为 <code>T</code> 中真实存在的键。把 <code>'done'</code> 改成 <code>'priority'</code> 会报错，而 <code>any</code> 会绕过这些检查。</p>
+        <p>练习文件 <code>src/d45-group-by-example.ts</code> 用 <code>@ts-expect-error</code> 标记了不存在的字段名。移除标记后运行 <code>pnpm typecheck</code>，观察编译器指出错误。</p>
+        <p><a href="search-app/src/group-by.ts">查看 groupBy 实现</a></p>
     </section>
 
     <aside aria-labelledby="tips">
