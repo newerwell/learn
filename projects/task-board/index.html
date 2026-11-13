@@ -279,6 +279,7 @@
             <a href="#d30-title">D30 值与类型</a>
             <a href="#d31-title">D31 函数与闭包</a>
             <a href="#d32-title">D32 数组方法</a>
+            <a href="#d33-title">D33 对象与拷贝</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -713,6 +714,83 @@ tasksD32.every(task =&gt; task.status === 'done') // false</code></pre>
 // ['HTML 语义结构', '数组练习', '表单校验', '页面复盘', '闭包练习']</code></pre>
 
         <p>完成标准：能说明每个方法返回什么、适合什么场景；能用 <code>reduce</code> 分组；知道 <code>sort</code> 会修改原数组，并能提供比较函数。</p>
+    </section>
+
+    <section aria-labelledby="d33-title">
+        <h2 id="d33-title">D33：对象与拷贝</h2>
+        <p>在浏览器开发者工具（F12）的 Console 中，按顺序运行每个代码框。变量名带有 <code>D33</code> 后缀，便于和前几天的 Console 练习区分。</p>
+
+        <h3>实验 1：展开语法只做浅拷贝</h3>
+        <pre><code>var originalD33 = {
+    title: '学习任务',
+    detail: { status: '未开始' },
+    tags: ['JavaScript']
+};
+var shallowD33 = { ...originalD33 };
+
+shallowD33.title = '新任务';
+shallowD33.detail.status = '进行中';
+shallowD33.tags.push('闭包');
+[
+    originalD33.title,
+    shallowD33.title,
+    originalD33.detail.status,
+    originalD33.tags,
+    originalD33.detail === shallowD33.detail
+]
+// ['学习任务', '新任务', '进行中', ['JavaScript', '闭包'], true]</code></pre>
+        <p><code>{ ...originalD33 }</code> 创建了新的外层对象，所以改 <code>shallowD33.title</code> 不影响原对象；但 <code>detail</code> 和 <code>tags</code> 里的嵌套值仍指向同一对象或数组，修改它们会影响原对象。</p>
+
+        <h3>实验 2：用 structuredClone 深拷贝</h3>
+        <pre><code>var sourceDeepD33 = {
+    title: '学习任务',
+    detail: { status: '未开始' },
+    tags: ['JavaScript']
+};
+var deepD33 = structuredClone(sourceDeepD33);
+
+deepD33.detail.status = '进行中';
+deepD33.tags.push('闭包');
+[
+    sourceDeepD33.detail.status,
+    deepD33.detail.status,
+    sourceDeepD33.tags,
+    deepD33.tags,
+    sourceDeepD33.detail === deepD33.detail
+]
+// ['未开始', '进行中', ['JavaScript'], ['JavaScript', '闭包'], false]</code></pre>
+        <p><code>structuredClone</code> 会复制支持的数据及其嵌套结构，因此修改副本里的嵌套对象或数组，不会改到原对象。它不能复制函数等不支持的值。</p>
+
+        <h3>实验 3：JSON 序列化拷贝的限制</h3>
+        <p>函数属性会被忽略，<code>Date</code> 会变成字符串：</p>
+        <pre><code>var jsonSourceD33 = {
+    createdAt: new Date('2026-11-13T00:00:00Z'),
+    onSave: function () { return 'saved'; }
+};
+var jsonCopyD33 = JSON.parse(JSON.stringify(jsonSourceD33));
+[typeof jsonCopyD33.createdAt, jsonCopyD33.createdAt, jsonCopyD33.onSave]
+// ['string', '2026-11-13T00:00:00.000Z', undefined]</code></pre>
+        <p>循环引用无法被 JSON 序列化，会抛出错误：</p>
+        <pre><code>var circularD33 = { name: '循环引用' };
+circularD33.self = circularD33;
+try {
+    JSON.stringify(circularD33);
+} catch (error) {
+    error.name;
+}
+// 'TypeError'</code></pre>
+        <p><code>structuredClone</code> 可以处理循环引用；函数则不行。根据数据内容选择拷贝方式，不要把 JSON 序列化当作通用深拷贝。</p>
+
+        <h3>实验 4：Object.freeze 只冻结一层</h3>
+        <pre><code>var frozenD33 = Object.freeze({ detail: { status: '未开始' } });
+frozenD33.detail.status = '进行中';
+[
+    Object.isFrozen(frozenD33),
+    Object.isFrozen(frozenD33.detail),
+    frozenD33.detail.status
+]
+// [true, false, '进行中']</code></pre>
+        <p>冻结外层对象不会自动冻结里面的对象。练习完成标准：能复现浅拷贝导致的共享修改，能用 <code>structuredClone</code> 隔离嵌套数据，并说出 JSON 拷贝的三种限制。</p>
     </section>
 
     <aside aria-labelledby="tips">
