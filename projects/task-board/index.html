@@ -380,6 +380,7 @@
             <a href="#d41-title">D41 防抖节流</a>
             <a href="#d42-title">D42 小应用整合</a>
             <a href="#d43-title">D43 TS 环境</a>
+            <a href="#d44-title">D44 基础类型</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1365,6 +1366,46 @@ pnpm exec tsc --noEmit</code></pre>
 // TS2322：string 不能赋给 number</code></pre>
         <p>运行 <code>pnpm exec tsc --noEmit</code> 后，先看文件与行号，再比对“期望类型”和“实际类型”。修正类型不匹配，而不是用断言把错误藏起来。</p>
         <p><a href="search-app/">查看 D42 搜索应用与 TS 环境目录</a></p>
+    </section>
+
+    <section aria-labelledby="d44-title">
+        <h2 id="d44-title">D44：基础类型与 interface</h2>
+        <p>先用 <code>interface</code> 描述任务对象，再用 <code>TaskInput</code> 限定创建函数接收的数据。</p>
+        <pre><code>export interface Task {
+    id: string;
+    title: string;
+    done: boolean;
+    dueAt?: string;
+    tags: string[];
+}
+
+export interface TaskInput {
+    title: string;
+    dueAt?: string;
+    tags: string[];
+}
+
+export function createTask(input: TaskInput): Task</code></pre>
+        <p>实现会生成 <code>id</code>、把 <code>done</code> 设为 <code>false</code>，并复制标签数组。<code>dueAt</code> 可省略；填入其他类型会在类型检查时被拒绝。</p>
+
+        <h3>interface 与 type 怎么选？</h3>
+        <pre><code>interface TimestampedTask extends Task {
+    createdAt: string;
+}
+
+type TaskStatus = '待办' | '已完成';</code></pre>
+        <p><code>interface</code> 常用于对象契约，支持 <code>extends</code>；<code>type</code> 可表达联合、交叉、元组等，也可以给对象形状起别名。它们都能描述对象结构。</p>
+
+        <h3>可选属性与 undefined</h3>
+        <pre><code>interface OptionalDueDate {
+    dueAt?: string;                 // 属性可以省略；读取时是 string | undefined
+}
+
+interface RequiredDueDate {
+    dueAt: string | undefined;      // 属性必须存在，值才可以是 undefined
+}</code></pre>
+        <p>在 <code>src/d44-type-check.ts</code> 里有一条被 <code>@ts-expect-error</code> 标记的错误示例。删除这行标记并运行 <code>pnpm typecheck</code>，就能看到 <code>title</code> 传入数字时的类型报错；恢复标记后，编译器会检查这条错误是否仍然存在。</p>
+        <p><a href="search-app/src/task-model.ts">查看任务 model 实现</a></p>
     </section>
 
     <aside aria-labelledby="tips">
