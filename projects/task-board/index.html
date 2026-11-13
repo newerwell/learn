@@ -303,6 +303,20 @@
             max-height: 14rem;
             overflow: auto;
         }
+
+        .d38-list-frame {
+            max-height: 16rem;
+            overflow: auto;
+            padding: 8px 16px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+        }
+
+        .d38-field-error {
+            display: block;
+            min-height: 1.4em;
+            color: #b91c1c;
+        }
     </style>
 </head>
 <body>
@@ -325,6 +339,7 @@
             <a href="#d35-title">D35 作用域与 this</a>
             <a href="#d36-title">D36 复盘自测</a>
             <a href="#d37-title">D37 DOM 事件</a>
+            <a href="#d38-title">D38 事件委托</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1092,6 +1107,51 @@ var deep = structuredClone(original);</code></pre>
         <p>它们作用不同：一个取消浏览器默认动作，一个停止事件继续传播。练习标准：能说出捕获与冒泡方向、区分 <code>target/currentTarget</code>，并解释两个方法各自阻止什么。</p>
     </section>
 
+    <section aria-labelledby="d38-title">
+        <h2 id="d38-title">D38：事件委托与表单校验</h2>
+
+        <h3>动态任务列表</h3>
+        <p>用输入框添加单条任务，或一次添加 100 条；每条任务都能删除。删除按钮由列表上的同一个 click 监听器统一处理。</p>
+        <label for="d38-task-title">任务标题</label>
+        <input id="d38-task-title" type="text" autocomplete="off">
+        <button id="d38-add-one" type="button">添加一条</button>
+        <button id="d38-add-hundred" type="button">批量添加 100 条</button>
+        <p id="d38-list-status" aria-live="polite">列表初始化中</p>
+        <div class="d38-list-frame">
+            <ul id="d38-task-list" aria-label="可添加和删除的任务列表"></ul>
+        </div>
+
+        <h4>委托删除的核心代码</h4>
+        <pre><code>taskList.addEventListener('click', event =&gt; {
+    const deleteButton = event.target.closest('[data-action="delete"]');
+    if (!deleteButton || !taskList.contains(deleteButton)) return;
+    deleteButton.closest('li[data-id]').remove();
+});</code></pre>
+        <p>监听器只绑在 <code>ul</code> 上一次。点击未来新增的删除按钮时，事件会冒泡到列表，<code>event.target.closest(...)</code> 找到按钮，再定位并删除对应的 <code>li</code>。100 条任务仍然只需要这一个删除 click 监听器。</p>
+
+        <h3>实时表单校验</h3>
+        <form id="d38-form" novalidate>
+            <p>
+                <label for="d38-name">昵称（至少 2 个字符）</label><br>
+                <input id="d38-name" name="name" type="text" minlength="2" required aria-invalid="false" aria-describedby="d38-name-error">
+                <span id="d38-name-error" class="d38-field-error" aria-live="polite"></span>
+            </p>
+            <p>
+                <label for="d38-email">邮箱</label><br>
+                <input id="d38-email" name="email" type="email" required aria-invalid="false" aria-describedby="d38-email-error">
+                <span id="d38-email-error" class="d38-field-error" aria-live="polite"></span>
+            </p>
+            <button type="submit">提交练习表单</button>
+        </form>
+        <p id="d38-form-status" aria-live="polite">输入昵称和邮箱，观察实时提示。</p>
+        <pre><code>input.addEventListener('input', () =&gt; validateField(input));
+form.addEventListener('submit', event =&gt; {
+    event.preventDefault();
+    // 检查所有字段，有错误就显示在对应输入框旁
+});</code></pre>
+        <p>每个错误提示都通过 <code>aria-describedby</code> 关联到输入框；校验时同步设置 <code>aria-invalid</code>。提交监听器调用 <code>preventDefault()</code>，因此练习不会向服务器发送数据。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -1229,6 +1289,108 @@ var deep = structuredClone(original);</code></pre>
             });
             parentD37.addEventListener('click', event => recordD37('父冒泡', event));
             clearButtonD37.addEventListener('click', () => logD37.replaceChildren());
+        })();
+
+        (() => {
+            const taskListD38 = document.querySelector('#d38-task-list');
+            const taskTitleD38 = document.querySelector('#d38-task-title');
+            const addOneD38 = document.querySelector('#d38-add-one');
+            const addHundredD38 = document.querySelector('#d38-add-hundred');
+            const listStatusD38 = document.querySelector('#d38-list-status');
+            const formD38 = document.querySelector('#d38-form');
+            const formStatusD38 = document.querySelector('#d38-form-status');
+            if (!taskListD38 || !taskTitleD38 || !addOneD38 || !addHundredD38 || !listStatusD38 || !formD38 || !formStatusD38) return;
+
+            let nextTaskIdD38 = 1;
+            const makeTaskD38 = (title) => {
+                const item = document.createElement('li');
+                const text = document.createElement('span');
+                const deleteButton = document.createElement('button');
+                item.dataset.id = `d38-${nextTaskIdD38++}`;
+                text.textContent = title;
+                deleteButton.type = 'button';
+                deleteButton.dataset.action = 'delete';
+                deleteButton.textContent = '删除';
+                deleteButton.setAttribute('aria-label', `删除任务 ${item.dataset.id}`);
+                item.append(text, ' ', deleteButton);
+                return item;
+            };
+
+            const updateListStatusD38 = () => {
+                listStatusD38.textContent = `当前 ${taskListD38.children.length} 条任务；列表上只有 1 个删除 click 监听器。`;
+            };
+
+            const appendTaskD38 = (title) => taskListD38.append(makeTaskD38(title));
+            ['练习事件委托', '添加后再删除', '未来创建的按钮也有效'].forEach(appendTaskD38);
+            updateListStatusD38();
+
+            addOneD38.addEventListener('click', () => {
+                const title = taskTitleD38.value.trim();
+                if (!title) {
+                    taskTitleD38.focus();
+                    listStatusD38.textContent = '先输入任务标题，再添加。';
+                    return;
+                }
+                appendTaskD38(title);
+                taskTitleD38.value = '';
+                taskTitleD38.focus();
+                updateListStatusD38();
+            });
+
+            addHundredD38.addEventListener('click', () => {
+                const fragment = document.createDocumentFragment();
+                for (let index = 1; index <= 100; index += 1) {
+                    fragment.append(makeTaskD38(`批量任务 ${index}`));
+                }
+                taskListD38.append(fragment);
+                updateListStatusD38();
+            });
+
+            taskListD38.addEventListener('click', event => {
+                const deleteButton = event.target.closest('[data-action="delete"]');
+                if (!deleteButton || !taskListD38.contains(deleteButton)) return;
+                deleteButton.closest('li[data-id]').remove();
+                updateListStatusD38();
+            });
+
+            const fieldsD38 = [
+                {
+                    input: document.querySelector('#d38-name'),
+                    error: document.querySelector('#d38-name-error'),
+                    requiredMessage: '请填写昵称。',
+                    shortMessage: '昵称至少需要 2 个字符。'
+                },
+                {
+                    input: document.querySelector('#d38-email'),
+                    error: document.querySelector('#d38-email-error'),
+                    requiredMessage: '请填写邮箱。',
+                    typeMessage: '请输入有效的邮箱地址。'
+                }
+            ];
+
+            const validateFieldD38 = (field) => {
+                let message = '';
+                if (field.input.validity.valueMissing) message = field.requiredMessage;
+                else if (field.input.validity.tooShort) message = field.shortMessage;
+                else if (field.input.validity.typeMismatch) message = field.typeMessage;
+
+                field.input.setAttribute('aria-invalid', String(Boolean(message)));
+                field.error.textContent = message;
+                return !message;
+            };
+
+            for (const field of fieldsD38) {
+                field.input.addEventListener('input', () => validateFieldD38(field));
+            }
+
+            formD38.addEventListener('submit', event => {
+                event.preventDefault();
+                const valid = fieldsD38.map(validateFieldD38).every(Boolean);
+                formStatusD38.textContent = valid
+                    ? '校验通过；这是本地练习，没有发送数据。'
+                    : '请修正上方标出的字段后再提交。';
+                fieldsD38.find(field => field.input.getAttribute('aria-invalid') === 'true')?.input.focus();
+            });
         })();
     </script>
 </body>
