@@ -338,6 +338,20 @@
             border-left: 4px solid #64748b;
             background: #f1f5f9;
         }
+
+        .d41-scroll-area {
+            height: 180px;
+            overflow: auto;
+            border: 1px solid #64748b;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .d41-scroll-content {
+            min-height: 900px;
+            padding: 12px;
+            background: linear-gradient(#eff6ff, #dbeafe, #bfdbfe);
+        }
     </style>
 </head>
 <body>
@@ -363,6 +377,7 @@
             <a href="#d38-title">D38 事件委托</a>
             <a href="#d39-title">D39 Promise</a>
             <a href="#d40-title">D40 async/await</a>
+            <a href="#d41-title">D41 防抖节流</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1270,6 +1285,47 @@ getValueD39() instanceof Promise;  // true</code></pre>
         <p>当前页面的演示版还接收可选的 <code>fetcher</code> 参数（默认是真实 <code>fetch</code>），只用于稳定模拟断网和超时。超时按钮会等待 5 秒，再显示可读的错误状态。</p>
     </section>
 
+    <section aria-labelledby="d41-title">
+        <h2 id="d41-title">D41：防抖与节流</h2>
+
+        <h3>搜索输入：300ms 防抖</h3>
+        <p>快速输入一串文字，再停下 300ms。中间会反复清除旧定时器，只有最后一次输入触发搜索请求。</p>
+        <label for="d41-search">搜索任务</label>
+        <input id="d41-search" type="search" placeholder="试试快速输入 Promise">
+        <button id="d41-reset" type="button">重置计数</button>
+        <p id="d41-search-count">input 事件：0 次；fetch 请求：0 次</p>
+        <ul id="d41-search-results" aria-label="搜索结果"></ul>
+        <pre><code>let searchTimer;
+searchInput.addEventListener('input', event =&gt; {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() =&gt; search(event.target.value), 300);
+});</code></pre>
+        <p>在 DevTools 的 Network → Fetch/XHR 里清空记录，快速输入 8 个字并停下；预期输入事件约 8 次，防抖后的请求 1 次。当前演示请求同源 JSON，并在前端筛选结果。</p>
+
+        <h3>滚动事件：200ms 节流</h3>
+        <p>在下面的框内连续滚动，观察原始 scroll 事件与节流回调的次数差异：</p>
+        <div id="d41-scroll-area" class="d41-scroll-area" tabindex="0" aria-label="节流滚动练习区域">
+            <div class="d41-scroll-content">在这个区域连续滚动，节流后的回调最多每 200ms 执行一次。</div>
+        </div>
+        <p id="d41-scroll-count">scroll 事件：0 次；节流回调：0 次</p>
+        <pre><code>let throttleTimer = null;
+scrollArea.addEventListener('scroll', () =&gt; {
+    if (throttleTimer) return;
+    updateScrollPosition();
+    throttleTimer = setTimeout(() =&gt; {
+        throttleTimer = null;
+    }, 200);
+}, { passive: true });</code></pre>
+
+        <h3>为什么要清理定时器？</h3>
+        <pre><code>window.addEventListener('pagehide', () =&gt; {
+    clearTimeout(searchTimer);
+    clearTimeout(throttleTimer);
+    activeRequestController?.abort();
+});</code></pre>
+        <p>防抖适合搜索、自动保存：一串连续操作结束后再执行一次。节流适合滚动、缩放：操作持续时按固定频率执行。新输入要 <code>clearTimeout</code>；页面离开时也应清理定时器，并取消还在进行的请求。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -1676,6 +1732,102 @@ getValueD39() instanceof Promise;  // true</code></pre>
                     }, { once: true });
                 })
             }));
+        })();
+
+        (() => {
+            const searchInputD41 = document.querySelector('#d41-search');
+            const resetButtonD41 = document.querySelector('#d41-reset');
+            const searchCountD41 = document.querySelector('#d41-search-count');
+            const searchResultsD41 = document.querySelector('#d41-search-results');
+            const scrollAreaD41 = document.querySelector('#d41-scroll-area');
+            const scrollCountD41 = document.querySelector('#d41-scroll-count');
+            if (!searchInputD41 || !resetButtonD41 || !searchCountD41 || !searchResultsD41 || !scrollAreaD41 || !scrollCountD41) return;
+
+            let inputEventsD41 = 0;
+            let fetchRequestsD41 = 0;
+            let searchTimerD41 = null;
+            let activeRequestControllerD41 = null;
+            const updateSearchCountD41 = () => {
+                searchCountD41.textContent = `input 事件：${inputEventsD41} 次；fetch 请求：${fetchRequestsD41} 次`;
+            };
+
+            const searchD41 = async query => {
+                const normalizedQuery = query.trim().toLowerCase();
+                if (!normalizedQuery) {
+                    searchResultsD41.replaceChildren();
+                    return;
+                }
+
+                activeRequestControllerD41?.abort();
+                const controller = new AbortController();
+                activeRequestControllerD41 = controller;
+                fetchRequestsD41 += 1;
+                updateSearchCountD41();
+
+                try {
+                    const url = `./data/d39-tasks.json?q=${encodeURIComponent(normalizedQuery)}&t=${Date.now()}`;
+                    const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (controller.signal.aborted) return;
+
+                    const matches = data.items.filter(task => task.title.toLowerCase().includes(normalizedQuery));
+                    searchResultsD41.replaceChildren();
+                    if (matches.length === 0) {
+                        const emptyMessage = document.createElement('li');
+                        emptyMessage.textContent = '没有匹配的任务';
+                        searchResultsD41.append(emptyMessage);
+                        return;
+                    }
+                    for (const task of matches) {
+                        const item = document.createElement('li');
+                        item.textContent = task.title;
+                        searchResultsD41.append(item);
+                    }
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        searchResultsD41.textContent = `搜索失败：${error.message}`;
+                    }
+                }
+            };
+
+            searchInputD41.addEventListener('input', () => {
+                inputEventsD41 += 1;
+                updateSearchCountD41();
+                clearTimeout(searchTimerD41);
+                activeRequestControllerD41?.abort();
+                searchTimerD41 = setTimeout(() => searchD41(searchInputD41.value), 300);
+            });
+
+            resetButtonD41.addEventListener('click', () => {
+                clearTimeout(searchTimerD41);
+                activeRequestControllerD41?.abort();
+                searchInputD41.value = '';
+                inputEventsD41 = 0;
+                fetchRequestsD41 = 0;
+                searchResultsD41.replaceChildren();
+                updateSearchCountD41();
+            });
+
+            let rawScrollEventsD41 = 0;
+            let throttledCallsD41 = 0;
+            let throttleTimerD41 = null;
+            scrollAreaD41.addEventListener('scroll', () => {
+                rawScrollEventsD41 += 1;
+                if (!throttleTimerD41) {
+                    throttledCallsD41 += 1;
+                    throttleTimerD41 = setTimeout(() => {
+                        throttleTimerD41 = null;
+                    }, 200);
+                }
+                scrollCountD41.textContent = `scroll 事件：${rawScrollEventsD41} 次；节流回调：${throttledCallsD41} 次`;
+            }, { passive: true });
+
+            window.addEventListener('pagehide', () => {
+                clearTimeout(searchTimerD41);
+                clearTimeout(throttleTimerD41);
+                activeRequestControllerD41?.abort();
+            }, { once: true });
         })();
     </script>
 </body>
