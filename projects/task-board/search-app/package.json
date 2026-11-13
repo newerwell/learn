@@ -1,0 +1,10 @@
+{
+	"name": "task-board-search-app",
+	"private": true,
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"typescript": "^7.0.2"
+	}
+}
