@@ -382,6 +382,7 @@
             <a href="#d43-title">D43 TS 环境</a>
             <a href="#d44-title">D44 基础类型</a>
             <a href="#d45-title">D45 泛型</a>
+            <a href="#d46-title">D46 类型收窄</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1424,6 +1425,33 @@ const completed = tasksByDone.true ?? [];</code></pre>
         <p><code>T</code> 让输入元素和输出分组里的元素保持同一种类型；<code>K extends keyof T</code> 把字段名限制为 <code>T</code> 中真实存在的键。把 <code>'done'</code> 改成 <code>'priority'</code> 会报错，而 <code>any</code> 会绕过这些检查。</p>
         <p>练习文件 <code>src/d45-group-by-example.ts</code> 用 <code>@ts-expect-error</code> 标记了不存在的字段名。移除标记后运行 <code>pnpm typecheck</code>，观察编译器指出错误。</p>
         <p><a href="search-app/src/group-by.ts">查看 groupBy 实现</a></p>
+    </section>
+
+    <section aria-labelledby="d46-title">
+        <h2 id="d46-title">D46：类型收窄</h2>
+        <p>接口响应在解析前先视为 <code>unknown</code>。确认它是字符串，或是带有字符串 <code>message</code> 的对象后，再安全读取内容。</p>
+        <pre><code>function isString(value: unknown): value is string {
+    return typeof value === 'string';
+}
+
+function readMessage(response: unknown): string {
+    if (isString(response)) return response;
+    if (isApiMessage(response)) return response.message;
+    return '接口返回格式无法识别';
+}</code></pre>
+        <p><code>any</code> 会跳过检查，可能让错误操作通过编译；<code>unknown</code> 可以接收任意输入，但必须先用 <code>typeof</code>、属性检查或自定义守卫缩小范围。</p>
+
+        <h3>用 never 检查联合类型是否处理完整</h3>
+        <pre><code>type ApiResult =
+    | { kind: 'text'; text: string }
+    | { kind: 'user'; name: string };
+
+function assertNever(value: never): never {
+    throw new Error(`未处理的结果：${String(value)}`);
+}</code></pre>
+        <p>当 <code>switch</code> 已处理联合类型的所有分支时，<code>default</code> 中的值会收窄为 <code>never</code>。以后给联合类型增加新分支但忘记处理，编译器就会在穷尽检查处报错。</p>
+        <p>源码 <code>src/d46-narrowing.ts</code> 包含字符串/对象响应解析和 <code>never</code> 穷尽检查；<code>src/d46-type-check.ts</code> 展示未收窄的 <code>unknown</code> 会被拒绝。</p>
+        <p><a href="search-app/src/d46-narrowing.ts">查看类型守卫实现</a></p>
     </section>
 
     <aside aria-labelledby="tips">
