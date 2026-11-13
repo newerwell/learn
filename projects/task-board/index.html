@@ -261,6 +261,20 @@
                 grid-template-columns: minmax(0, 1fr);
             }
         }
+
+        /* D34：限制 100 条演示记录的显示高度，列表内容可滚动查看 */
+        .d34-list-frame {
+            max-height: 16rem;
+            overflow: auto;
+            padding: 8px 16px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .d34-list-frame li {
+            margin: 6px 0;
+        }
     </style>
 </head>
 <body>
@@ -793,6 +807,50 @@ frozenD33.detail.status = '进行中';
         <p>冻结外层对象不会自动冻结里面的对象。练习完成标准：能复现浅拷贝导致的共享修改，能用 <code>structuredClone</code> 隔离嵌套数据，并说出 JSON 拷贝的三种限制。</p>
     </section>
 
+    <section aria-labelledby="d34-title">
+        <h2 id="d34-title">D34：安全渲染列表</h2>
+        <p>下面会用安全方式生成 100 条记录。第一条记录包含一段看起来像 HTML 的文字；它应该原样显示为文字，不会创建图片或弹窗。</p>
+        <div class="d34-list-frame">
+            <ul id="d34-task-list" aria-label="安全渲染的 100 条任务"></ul>
+        </div>
+        <p>列表项数：<strong id="d34-count" aria-live="polite">加载中</strong></p>
+
+        <h3>安全渲染：createElement + textContent</h3>
+        <pre><code>function renderTasksD34(tasks, listElement) {
+    const fragment = document.createDocumentFragment();
+    for (const task of tasks) {
+        const item = document.createElement('li');
+        item.dataset.id = String(task.id);
+        item.textContent = task.title;
+        fragment.append(item);
+    }
+    listElement.replaceChildren(fragment);
+}</code></pre>
+        <p>每条记录都用唯一的 <code>data-id</code> 标识。<code>DocumentFragment</code> 先在内存中组装节点，再一次性放入列表，避免把 100 条数据拼成 HTML 字符串。</p>
+
+        <h3>在 Console 检查结果</h3>
+        <p>先打开本地看板的 Console，再逐条运行：</p>
+        <pre><code>document.querySelectorAll('#d34-task-list li').length
+// 100
+new Set([...document.querySelectorAll('#d34-task-list li')].map(item =&gt; item.dataset.id)).size
+// 100：100 个 data-id 各不相同
+document.querySelector('#d34-task-list li').dataset.id
+// 'task-1'
+document.querySelector('#d34-task-list li').textContent
+// '&lt;img src=x onerror="alert(1)"&gt;'
+document.querySelector('#d34-task-list li img')
+// null：文字没有被解析成 img 元素</code></pre>
+
+        <h3>对比：innerHTML 会解析不可信字符串</h3>
+        <p>以下代码只显示在页面上，不会自动运行。要观察 XSS 演示时，仅在自己的本地练习页 Console 手动运行；它会创建图片并触发一个提示框：</p>
+        <pre><code>var unsafeProbeD34 = document.createElement('div');
+unsafeProbeD34.innerHTML = '&lt;img src=x onerror="alert(1)"&gt;';
+document.body.append(unsafeProbeD34);</code></pre>
+        <p>关闭提示框后，再单独运行这句移除演示节点：</p>
+        <pre><code>unsafeProbeD34.remove();</code></pre>
+        <p>XSS 是把不可信内容当作 HTML 或脚本执行的跨站脚本风险。<code>innerHTML</code> 会解析字符串里的标签和事件属性；<code>textContent</code> 只放入文字，不会把它们当标签执行。练习标准：解释两者差异、确认 100 条记录的 <code>data-id</code> 唯一，并始终用安全方式渲染用户提供的内容。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -802,5 +860,30 @@ frozenD33.detail.status = '进行中';
     <footer>
          <p>我的全栈学习记录 · 阶段 1</p>
     </footer>
+    <script>
+        (() => {
+            const taskListD34 = document.querySelector('#d34-task-list');
+            const taskCountD34 = document.querySelector('#d34-count');
+            if (!taskListD34 || !taskCountD34) return;
+
+            const tasksD34 = Array.from({ length: 100 }, (_, index) => ({
+                id: `task-${index + 1}`,
+                title: index === 0
+                    ? '<img src=x onerror="alert(1)">'
+                    : `任务 ${index + 1}`
+            }));
+            const fragmentD34 = document.createDocumentFragment();
+
+            for (const task of tasksD34) {
+                const item = document.createElement('li');
+                item.dataset.id = String(task.id);
+                item.textContent = task.title;
+                fragmentD34.append(item);
+            }
+
+            taskListD34.replaceChildren(fragmentD34);
+            taskCountD34.textContent = String(tasksD34.length);
+        })();
+    </script>
 </body>
 </html>
