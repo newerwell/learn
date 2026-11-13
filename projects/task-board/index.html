@@ -276,6 +276,8 @@
             <a href="#cards-title">任务卡片</a>
             <a href="#grid-title">Grid 实验</a>
             <a href="#dashboard-title">工作面板</a>
+            <a href="#d30-title">D30 值与类型</a>
+            <a href="#d31-title">D31 函数与闭包</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -551,6 +553,98 @@
 
         <p>宽屏时观察左侧导航、右上顶部栏和 2×2 卡片；把视口调到 375px，观察导航移到上方、卡片变成单列。</p>
         <p>给卡片增加几行文字，检查内容能否自然撑开；在 DevTools 中打开 Grid 辅助线，观察命名区域的变化。</p>
+    </section>
+
+    <section aria-labelledby="d30-title">
+        <h2 id="d30-title">D30：值与类型</h2>
+        <p>先预测每个表达式的结果，再打开浏览器开发者工具（F12）的 Console，逐条输入并按 Enter。Console 显示的字符串结果会带引号。</p>
+
+        <h3>表达式验证</h3>
+        <pre><code>1 == '1'              // true：== 会进行类型转换，把 '1' 转成数字 1
+1 === '1'             // false：=== 不转换类型，number 和 string 不同
+typeof null           // "object"：JavaScript 保留至今的历史行为
+null == undefined     // true：这是 == 的特殊规则
+NaN === NaN           // false：NaN 与任何值比较都不相等，包括它自己
+'5' - 1               // 4：减法会把字符串 '5' 转成数字
+[] + {}               // "[object Object]"：[] 转成空字符串，对象转成字符串后再拼接</code></pre>
+        <p>判断是否为 NaN 时使用 <code>Number.isNaN(value)</code>。日常比较优先用 <code>===</code>，只有明确需要宽松比较时才考虑 <code>==</code>。</p>
+
+        <h3>模板字符串</h3>
+        <pre><code>const learnerName = '小明';
+const lessonDay = 30;
+`你好，${learnerName}！今天学习 D${lessonDay}。`</code></pre>
+        <p>反引号包裹模板字符串，<code>${...}</code> 可以插入变量或表达式，也支持换行。</p>
+
+        <h3>可选链与空值合并</h3>
+        <pre><code>const learner = { profile: { name: '小明' } };
+learner?.profile?.name ?? '匿名';  // "小明"
+
+const guest = null;
+guest?.profile?.name ?? '匿名';    // "匿名"</code></pre>
+        <p><code>?.</code> 遇到 <code>null</code> 或 <code>undefined</code> 时停止继续读取属性；<code>??</code> 只在左侧为 <code>null</code> 或 <code>undefined</code> 时使用右侧默认值。</p>
+        <pre><code>0 || 10   // 10：|| 把 0 当作假值
+0 ?? 10   // 0：?? 保留 0
+'' || '默认'  // "默认"
+'' ?? '默认'  // ""</code></pre>
+        <p>练习完成标准：能解释 7 个表达式的结果，说明 <code>??</code> 与 <code>||</code> 的差异，并知道比较时为什么优先使用 <code>===</code>。</p>
+    </section>
+
+    <section aria-labelledby="d31-title">
+        <h2 id="d31-title">D31：函数与闭包</h2>
+        <p>先预测结果，再在浏览器开发者工具（F12）的 Console 运行。函数每调用一次，都会创建自己的局部变量；返回的内层函数可以继续访问创建它时所在的词法作用域。</p>
+
+        <h3>实验 1：两个独立的计数器</h3>
+        <pre><code>function counter() {
+    let n = 0;
+    return () =&gt; ++n;
+}
+
+var c1 = counter();
+var c2 = counter();
+[c1(), c1(), c2()]  // [1, 2, 1]</code></pre>
+        <p><code>c1</code> 和 <code>c2</code> 分别保留了各自调用 <code>counter()</code> 时创建的作用域，因此它们操作的是不同的 <code>n</code>。闭包不是把某个值“记住”，而是让函数仍能通过作用域链访问外层变量。</p>
+
+        <h3>实验 2：只执行一次的 once</h3>
+        <pre><code>function once(fn) {
+    let called = false;
+    let result;
+    return (...args) =&gt; {
+        if (!called) {
+            called = true;
+            result = fn(...args);
+        }
+        return result;
+    };
+}
+
+var onceCalls = 0;
+var greetOnce = once(name =&gt; {
+    onceCalls += 1;
+    return `你好，${name}`;
+});
+[greetOnce('小明'), greetOnce('小红'), onceCalls]
+// ['你好，小明', '你好，小明', 1]</code></pre>
+        <p>这个版本只调用原函数一次，并把第一次的返回值交给后续调用；<code>called</code> 和 <code>result</code> 由返回的函数通过闭包继续访问。</p>
+
+        <h3>实验 3：缓存结果的 memoize</h3>
+        <pre><code>function memoize(fn) {
+    const cache = new Map();
+    return value =&gt; {
+        if (cache.has(value)) return cache.get(value);
+        const result = fn(value);
+        cache.set(value, result);
+        return result;
+    };
+}
+
+var squareCalls = 0;
+var square = memoize(n =&gt; {
+    squareCalls += 1;
+    return n * n;
+});
+[square(5), square(5), squareCalls]  // [25, 25, 1]</code></pre>
+        <p>这里的 <code>memoize</code> 示例针对单个参数：第一次计算后把参数和结果放进 <code>Map</code>，同一参数再次传入时直接取缓存。</p>
+        <p>练习完成标准：能解释计数器结果和两个闭包保存的状态，并能说明 <code>once</code> 与 <code>memoize</code> 分别缓存了什么。</p>
     </section>
 
     <aside aria-labelledby="tips">
