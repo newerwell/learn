@@ -294,6 +294,7 @@
             <a href="#d31-title">D31 函数与闭包</a>
             <a href="#d32-title">D32 数组方法</a>
             <a href="#d33-title">D33 对象与拷贝</a>
+            <a href="#d35-title">D35 作用域与 this</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -851,6 +852,75 @@ document.body.append(unsafeProbeD34);</code></pre>
         <p>XSS 是把不可信内容当作 HTML 或脚本执行的跨站脚本风险。<code>innerHTML</code> 会解析字符串里的标签和事件属性；<code>textContent</code> 只放入文字，不会把它们当标签执行。练习标准：解释两者差异、确认 100 条记录的 <code>data-id</code> 唯一，并始终用安全方式渲染用户提供的内容。</p>
     </section>
 
+    <section aria-labelledby="d35-title">
+        <h2 id="d35-title">D35：作用域与 this</h2>
+        <p>普通函数的 <code>this</code> 看调用方式；箭头函数没有自己的 <code>this</code>，会从定义位置外层作用域取得。先预测每段结果，再分别在 Console 运行。</p>
+
+        <h3>1. 普通函数</h3>
+        <pre><code>function regularThisD35() {
+    return this === globalThis;
+}
+regularThisD35();  // true：非严格模式下独立调用，this 是全局对象
+
+function strictThisD35() {
+    'use strict';
+    return this;
+}
+strictThisD35();   // undefined：严格模式下独立调用</code></pre>
+        <p>普通函数的 <code>this</code> 由调用形式决定；若函数是严格模式，独立调用时不会自动指向全局对象。</p>
+
+        <h3>2. 对象方法</h3>
+        <pre><code>var profileD35 = {
+    name: '小明',
+    getName() {
+        return this.name;
+    }
+};
+profileD35.getName();  // '小明'：点号左边的对象是 this</code></pre>
+
+        <h3>3. 箭头函数</h3>
+        <pre><code>var ownerD35 = {
+    name: '外层对象',
+    makeGetter() {
+        return () =&gt; this.name;
+    }
+};
+var getterD35 = ownerD35.makeGetter();
+getterD35.call({ name: 'call 传入的对象' });  // '外层对象'</code></pre>
+        <p>箭头函数的 <code>this</code> 在创建时从 <code>makeGetter</code> 的外层作用域取得，之后用 <code>call</code> 也不能改掉它。</p>
+
+        <h3>4. call 和 apply</h3>
+        <pre><code>function greetD35(greeting, punctuation) {
+    return `${greeting}，${this.name}${punctuation}`;
+}
+var guestD35 = { name: '小明' };
+[
+    greetD35.call(guestD35, '你好', '！'),
+    greetD35.apply(guestD35, ['你好', '！'])
+]
+// ['你好，小明！', '你好，小明！']</code></pre>
+        <p><code>call</code> 接收逐个参数；<code>apply</code> 把参数放在数组里。两者都会在调用时指定普通函数的 <code>this</code>。</p>
+
+        <h3>5. 事件回调</h3>
+        <button id="d35-button" type="button">点击检查事件回调的 this</button>
+        <output id="d35-output" aria-live="polite">尚未点击</output>
+        <pre><code>document.querySelector('#d35-button').addEventListener('click', function (event) {
+    console.log(this === event.currentTarget);  // true
+});</code></pre>
+        <p>使用普通函数监听事件时，<code>this</code> 指向注册监听器的元素，也就是 <code>event.currentTarget</code>。箭头函数不会自动把 <code>this</code> 设为按钮。</p>
+
+        <h3>setTimeout 中丢失对象上下文</h3>
+        <pre><code>var timerObjD35 = {
+    checkThis() {
+        console.log(this === timerObjD35);
+    }
+};
+setTimeout(timerObjD35.checkThis, 100);  // false：回调不再以 timerObjD35 的方法形式调用
+setTimeout(timerObjD35.checkThis.bind(timerObjD35), 100);  // true</code></pre>
+        <p>把 <code>timerObjD35.checkThis</code> 单独传给 <code>setTimeout</code> 时，方法和对象的调用关系断开了。<code>bind</code> 会返回一个固定以 <code>timerObjD35</code> 作为 <code>this</code> 的新函数。</p>
+        <p>完成标准：能说出箭头函数的 <code>this</code> 由定义位置决定，并能解释和修复定时器回调里的上下文丢失。</p>
+    </section>
+
     <aside aria-labelledby="tips">
         <h2 id="tips">学习提示</h2>
         <p>先想清楚内容的含义，再选择标签。</p>
@@ -883,6 +953,16 @@ document.body.append(unsafeProbeD34);</code></pre>
 
             taskListD34.replaceChildren(fragmentD34);
             taskCountD34.textContent = String(tasksD34.length);
+        })();
+
+        (() => {
+            const buttonD35 = document.querySelector('#d35-button');
+            const outputD35 = document.querySelector('#d35-output');
+            if (!buttonD35 || !outputD35) return;
+
+            buttonD35.addEventListener('click', function (event) {
+                outputD35.textContent = `this === event.currentTarget：${this === event.currentTarget}`;
+            });
         })();
     </script>
 </body>
