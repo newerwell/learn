@@ -387,6 +387,7 @@
             <a href="#d48-title">D48 D42 迁移 TS</a>
             <a href="#d49-title">D49 类型复盘</a>
             <a href="#d50-title">D50 CSS 复盘</a>
+            <a href="#d57-title">D57 React 起步</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1508,6 +1509,20 @@ pnpm run quiz</code></pre>
         <p>从空白页面开始，在 40 分钟内重建侧栏、顶部栏和卡片区。宽屏排 3 列，375px 窄屏排 1 列，并确认没有横向滚动条。</p>
         <p><a href="css-review/index.html">打开 D50 dashboard 复盘页</a></p>
         <p>练习完成后，把实际用时和三条“这次更快的步骤 / 快在哪里 / 仍然卡住的地方”记在 <code>projects/task-board/docs/D50-CSS复盘记录.md</code>。</p>
+    </section>
+
+    <section aria-labelledby="d57-title">
+        <h2 id="d57-title">D57：React 环境、JSX 心智与最小接口契约</h2>
+        <p>先启动 React + TypeScript + Vite 起步项目，再理解 JSX 编译和函数组件的渲染方式。本日只保留一个 <code>App.tsx</code> 组件，不提前做 D58 的任务列表。</p>
+        <pre><code>cd projects\task-board\task-board-app
+pnpm install
+pnpm dev</code></pre>
+        <p>Vite 会打印本地预览地址，通常是 <code>http://localhost:5173</code>。最小接口约定见 <a href="docs/04-最小接口契约.md">D57 接口契约</a>，服务说明见 <a href="../../labs/mock-tasks-api/README.md">Mock 任务 API</a>。</p>
+        <ul>
+            <li>JSX 是会被编译成 <code>jsx()</code> / <code>jsxs()</code> 调用的语法，不是 HTML 字符串。</li>
+            <li>函数组件由 React 调用，返回描述 UI 的 JSX。</li>
+            <li>照接口契约，能写出列表、创建、更新、删除与错误请求。</li>
+        </ul>
     </section>
 
     <aside aria-labelledby="tips">
