@@ -55,20 +55,31 @@ console.log('Q5 运行值 =', q5);
 // ---------- Q6 keyof + Record ----------
 type Q6Keys = keyof Task;
 const q6: Record<Q6Keys, string> = { id: '', title: '', done: '', dueAt: '', tags: '' };
-// 预测：Q6Keys 是哪些字符串的联合？____
-console.log('Q6 运行值 =', Object.keys(q6));
+interface Q6Dictionary {
+  [key: string]: number;
+  count: number;
+}
+const q6Dictionary: Q6Dictionary = { count: 1, 'task-1': 2 };
+// @ts-expect-error 索引签名要求所有额外字段的值都是 number
+const q6bad: Q6Dictionary = { count: 1, label: 'x' };
+// 预测：Q6Keys 是什么联合？索引签名允许什么键和值？____
+console.log('Q6 运行值 =', Object.keys(q6), q6Dictionary);
 
-// ---------- Q7 typeof 用在类型位置 ----------
+// ---------- Q7 typeof + 条件类型 ----------
 const q7Value = { a: 1, b: 'x' };
 type Q7 = typeof q7Value;
+type Q7Label<T> = T extends string ? '文本' : '其他';
+type Q7A = Q7Label<Q7['a']>;
+type Q7B = Q7Label<Q7['b']>;
 const q7: Q7 = { a: 2, b: 'y' };
-// 预测：typeof 在这里拿到的是"值"还是"类型"？____
-console.log('Q7 运行值 =', q7);
+const q7LabelChecks: [Q7A, Q7B] = ['其他', '文本'];
+// 预测：typeof 在类型位置得到什么？Q7Label 如何根据输入类型选结果？____
+console.log('Q7 运行值 =', q7, q7LabelChecks);
 
 // ---------- Q8 unknown 收窄 ----------
 function q8(v: unknown): string {
   if (typeof v === 'string') return v.toUpperCase();
-  if (typeof v === 'number') return v.toFixed(1);
+  if (typeof v === 'number') return v.toFixed(2);
   return 'other';
 }
 // 预测：这三次调用分别返回什么？____
@@ -89,7 +100,7 @@ interface Q10Shape {
 const q10raw = { x: 1, y: 2 };
 const q10: Q10Shape = q10raw;
 // 预测：能通过吗？____（对比下一行被注释的写法）
-// const q10bad: Q10Shape = { x: 1, y: 2 };
+//const q10bad: Q10Shape = { x: 1, y: 2 };
 console.log('Q10 运行值 =', q10);
 
 console.log('\n做完了？去对照 D49-类型自测-答案.md，重点看"为什么"而不只是"是什么"。');

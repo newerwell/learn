@@ -33,7 +33,7 @@
 
 ```powershell
 cd labs\ts-vs-js
-pnpm install          # 装 typescript（只需一次）
+pnpm install          # 装 typescript 和 @types/node（只需一次）
 pnpm run check        # ① 类型检查：能通过的 6 个实验
 pnpm run check:broken # ② 故意写错的例子：看报错长什么样
 pnpm run build        # ③ 编译，产物在 dist/

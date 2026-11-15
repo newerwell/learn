@@ -20,7 +20,7 @@
 
 - 逐日任务：[notes/W8-任务.md](notes/W8-任务.md)
 - 项目 1 文档模板（D53–D55 填写产出）：`projects/task-board/docs/`
-- TS 自测：`cd labs\ts-vs-js; pnpm run quiz`（答案见同目录 `D49-类型自测-答案.md`）
+- TS 自测：`cd labs\ts-vs-js; pnpm run quiz`（答案见同目录 `D49-类型自测-答案.md`；`fs.d.ts` 阅读记录见 `D49-fs-dts-reading.md`）
 - 参考：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)、[labs/http-lab/README.md](labs/http-lab/README.md)
 
 > W8 的交接物（用户故事 + 数据模型 + 接口草案）会直接成为阶段 2（React）和阶段 3（后端）的输入。

@@ -385,6 +385,7 @@
             <a href="#d46-title">D46 类型收窄</a>
             <a href="#d47-title">D47 工具类型</a>
             <a href="#d48-title">D48 D42 迁移 TS</a>
+            <a href="#d49-title">D49 类型复盘</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1489,6 +1490,16 @@ pnpm build</code></pre>
         </ul>
         <p>提交前可用 <code>rg -n "\bany\b" src</code> 检查源码，再用 <code>pnpm typecheck</code> 确认 0 报错。</p>
         <p><a href="search-app/">打开已迁移的搜索应用</a></p>
+    </section>
+
+    <section aria-labelledby="d49-title">
+        <h2 id="d49-title">D49：类型复盘与声明文件阅读</h2>
+        <p>先做 10 道类型题并写下预测，再运行测验、对照答案。题目覆盖 <code>interface</code> 合并、<code>as const</code>、索引签名、<code>keyof</code>、条件类型、<code>unknown</code> 收窄与结构类型。</p>
+        <pre><code>cd labs/ts-vs-js
+pnpm install
+pnpm run quiz</code></pre>
+        <p>至少答对 8 题，再打开 <code>labs/ts-vs-js/node_modules/@types/node/fs.d.ts</code>，搜索 <code>function readFile(</code>，读一个重载的参数与返回类型。解析到的 TypeScript 类型只在编译期存在；运行时拿到的 JSON 等外部数据仍需检查。</p>
+        <p>类型测验答案和签名拆解说明分别在 <code>labs/ts-vs-js/D49-类型自测-答案.md</code> 与 <code>labs/ts-vs-js/D49-fs-dts-reading.md</code>。</p>
     </section>
 
     <aside aria-labelledby="tips">
