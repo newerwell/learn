@@ -16,19 +16,14 @@
 
 ## 当前周
 
-**第 7 周收尾 · TypeScript**（D31–D48 已提交，D49 待做）
+**第 8 周 · 阶段 1 收尾**（D49–D56：自测 + 复盘 + 项目 1 设计）
 
-进度：D43–D48 已完成（含把 D42 搜索应用迁移到 TS）。但"TS 与 JS 的关系"模型还不牢 → 先做 `labs/ts-vs-js` 补强，再做 D49。
+- 逐日任务：[notes/W8-任务.md](notes/W8-任务.md)
+- 项目 1 文档模板（D53–D55 填写产出）：`projects/task-board/docs/`
+- TS 自测：`cd labs\ts-vs-js; pnpm run quiz`（答案见同目录 `D49-类型自测-答案.md`）
+- 参考：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)、[labs/http-lab/README.md](labs/http-lab/README.md)
 
-- TS/JS 实验台：[labs/ts-vs-js/README.md](labs/ts-vs-js/README.md)（6 个实验：擦除、结构化类型、推断、any/unknown、收窄）
-- 语法对照卡：[labs/ts-vs-js/JS-TS-语法对照卡.md](labs/ts-vs-js/JS-TS-语法对照卡.md)（含 8 个高频报错的含义）
-- 逐日任务：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)（W8 还剩 D49–D56）
-- HTTP 实验台：[labs/http-lab/README.md](labs/http-lab/README.md)
-
-```powershell
-cd labs\ts-vs-js; pnpm install; pnpm run check
-node labs\http-lab\server.js        # http://127.0.0.1:3100
-```
+> W8 的交接物（用户故事 + 数据模型 + 接口草案）会直接成为阶段 2（React）和阶段 3（后端）的输入。
 
 ---
 

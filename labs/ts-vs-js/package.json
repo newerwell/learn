@@ -10,7 +10,8 @@
     "demo:structural": "node dist/03-structural.js",
     "demo:inference": "node dist/04-inference.js",
     "demo:unknown": "node dist/05-any-vs-unknown.js",
-    "demo:narrowing": "node dist/06-narrowing.js"
+    "demo:narrowing": "node dist/06-narrowing.js",
+    "quiz": "tsc -p . && node dist/07-quiz.js"
   },
   "devDependencies": {
     "typescript": "^7.0.2"
