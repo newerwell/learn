@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="D50 CSS 复盘：重新搭建响应式学习 dashboard。">
+    <title>D50 · 学习工作台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="主导航">
+            <a class="brand" href="#overview" aria-label="Northstar 首页">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>northstar</span>
+            </a>
+
+            <nav class="primary-nav" aria-label="工作区">
+                <p class="nav-label">工作区</p>
+                <a class="nav-link is-active" href="#overview"><span aria-hidden="true">⌂</span> 总览</a>
+                <a class="nav-link" href="#today"><span aria-hidden="true">▤</span> 今日任务</a>
+                <a class="nav-link" href="#progress"><span aria-hidden="true">◷</span> 学习进度</a>
+                <a class="nav-link" href="#resources"><span aria-hidden="true">◇</span> 学习资源</a>
+            </nav>
+
+            <div class="sidebar-note">
+                <span class="note-icon" aria-hidden="true">✦</span>
+                <p>每天进步一点，积累就会看得见。</p>
+            </div>
+
+            <div class="profile" id="profile">
+                <span class="avatar" aria-hidden="true">林</span>
+                <span class="profile-copy"><strong>林同学</strong><small>阶段 1 · 前端基础</small></span>
+                <span class="profile-more" aria-hidden="true">···</span>
+            </div>
+        </aside>
+
+        <div class="main-shell">
+            <header class="topbar">
+                <div class="breadcrumbs"><span>学习空间</span><span aria-hidden="true">/</span><strong>总览</strong></div>
+                <div class="topbar-actions">
+                    <span class="today-label"><span class="online-dot" aria-hidden="true"></span> 今天，稳步前进</span>
+                    <a class="icon-button" href="#today" aria-label="查看今日任务">↗</a>
+                </div>
+            </header>
+
+            <main class="page-content" id="overview">
+                <section class="welcome" aria-labelledby="welcome-title">
+                    <div>
+                        <p class="eyebrow">今天 · 专注日</p>
+                        <h1 id="welcome-title">你好，林同学 <span aria-hidden="true">✦</span></h1>
+                        <p class="welcome-copy">把注意力放在今天，剩下的交给持续练习。</p>
+                    </div>
+                    <a class="primary-button" href="#today"><span aria-hidden="true">＋</span> 查看今日计划</a>
+                </section>
+
+                <section class="overview-grid" id="progress" aria-label="学习概览">
+                    <article class="summary-card progress-card">
+                        <div class="card-topline"><span>本周学习目标</span><span class="card-icon blue" aria-hidden="true">↗</span></div>
+                        <p class="summary-value">6.5 <span>小时</span></p>
+                        <div class="progress-track" role="img" aria-label="本周目标完成 65%"><span></span></div>
+                        <p class="card-footnote"><strong>65%</strong> 已完成 · 目标 10 小时</p>
+                    </article>
+
+                    <article class="summary-card streak-card">
+                        <div class="card-topline"><span>连续学习</span><span class="card-icon amber" aria-hidden="true">✦</span></div>
+                        <p class="summary-value">12 <span>天</span></p>
+                        <p class="card-footnote">比上周多坚持了 <strong>3 天</strong></p>
+                        <div class="streak-dots" role="img" aria-label="本周已有五天完成学习">
+                            <span class="is-done">一</span><span class="is-done">二</span><span class="is-done">三</span><span class="is-done">四</span><span class="is-done">五</span><span>六</span><span>日</span>
+                        </div>
+                    </article>
+
+                    <article class="summary-card focus-card">
+                        <div class="card-topline"><span>专注时长</span><span class="card-icon green" aria-hidden="true">◷</span></div>
+                        <p class="summary-value">2.4 <span>小时</span></p>
+                        <p class="card-footnote">今日累计 <strong>4 个专注时段</strong></p>
+                        <div class="focus-bars" role="img" aria-label="一周专注时长趋势">
+                            <span style="--bar-height: 42%"></span><span style="--bar-height: 67%"></span><span style="--bar-height: 52%"></span><span style="--bar-height: 88%"></span><span style="--bar-height: 73%"></span><span style="--bar-height: 48%"></span><span style="--bar-height: 30%"></span>
+                        </div>
+                    </article>
+                </section>
+
+                <div class="section-heading">
+                    <div><p class="eyebrow">保持好节奏</p><h2>今天的安排</h2></div>
+                    <a class="subtle-link" href="#all-tasks">查看全部 <span aria-hidden="true">→</span></a>
+                </div>
+
+                <section class="content-grid" id="today" aria-label="今日学习安排">
+                    <article class="panel tasks-panel" id="all-tasks">
+                        <div class="panel-heading"><div><h3>优先完成</h3><p>完成三件重要的小事</p></div><span class="task-count">2 / 3</span></div>
+                        <ul class="task-list">
+                            <li class="task-item is-complete"><span class="check-mark" aria-hidden="true">✓</span><span class="task-copy"><strong>复习语义化 HTML</strong><small>前端基础 · 25 分钟</small></span><span class="task-tag">已完成</span></li>
+                            <li class="task-item"><span class="check-mark" aria-hidden="true"></span><span class="task-copy"><strong>完成 Grid 布局练习</strong><small>CSS · 40 分钟</small></span><span class="task-tag is-current">进行中</span></li>
+                            <li class="task-item"><span class="check-mark" aria-hidden="true"></span><span class="task-copy"><strong>整理今天的学习笔记</strong><small>复盘 · 15 分钟</small></span><span class="task-tag">待开始</span></li>
+                        </ul>
+                        <a class="add-task" href="#today"><span aria-hidden="true">＋</span> 添加一项计划</a>
+                    </article>
+
+                    <article class="panel resource-panel" id="resources">
+                        <div class="panel-heading"><div><h3>继续上次学习</h3><p>从停下的位置接着来</p></div><span class="resource-icon" aria-hidden="true">⌘</span></div>
+                        <div class="resource-cover"><span class="cover-orbit orbit-one"></span><span class="cover-orbit orbit-two"></span><span class="cover-spark">✦</span><span class="cover-label">CSS · MODULE 04</span></div>
+                        <div class="resource-meta"><span>布局系统</span><span>12 / 18 节</span></div>
+                        <div class="progress-track small"><span></span></div>
+                        <a class="continue-link" href="#resources">继续学习 <span aria-hidden="true">→</span></a>
+                    </article>
+                </section>
+
+                <footer class="page-footer">每一次专注，都会让下一步更清晰。</footer>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
