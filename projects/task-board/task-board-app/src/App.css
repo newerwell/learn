@@ -61,6 +61,35 @@
   font-size: 0.95rem;
 }
 
+.task-list {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.task-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #dbe4f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.task-list strong {
+  margin-left: auto;
+  color: #287a52;
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  margin-top: 18px;
+  color: #6c778a;
+}
+
 @media (max-width: 520px) {
   .lesson {
     margin: 24px auto;
