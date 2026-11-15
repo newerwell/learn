@@ -16,16 +16,19 @@
 
 ## 当前周
 
-**第 3 周 · 阶段 1：前端基础**（HTML / CSS / JS / TS）
+**第 7 周收尾 · TypeScript**（D31–D48 已提交，D49 待做）
 
-进度：D1–D5 已基本掌握；D6–D10（DevTools / HTTP 报文 / 缓存 / CORS）理解偏弱，改用"亲手制造现象"的方式回炉——见 `labs/http-lab`。
+进度：D43–D48 已完成（含把 D42 搜索应用迁移到 TS）。但"TS 与 JS 的关系"模型还不牢 → 先做 `labs/ts-vs-js` 补强，再做 D49。
 
-- W1–W2 逐日任务：[notes/W1-W2-任务.md](notes/W1-W2-任务.md)（14 天）
-- W3–W8 逐日任务：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)（42 天，含 5 个回炉点）
+- TS/JS 实验台：[labs/ts-vs-js/README.md](labs/ts-vs-js/README.md)（6 个实验：擦除、结构化类型、推断、any/unknown、收窄）
+- 语法对照卡：[labs/ts-vs-js/JS-TS-语法对照卡.md](labs/ts-vs-js/JS-TS-语法对照卡.md)（含 8 个高频报错的含义）
+- 逐日任务：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)（W8 还剩 D49–D56）
 - HTTP 实验台：[labs/http-lab/README.md](labs/http-lab/README.md)
-  ```powershell
-  node labs\http-lab\server.js        # 打开 http://127.0.0.1:3100
-  ```
+
+```powershell
+cd labs\ts-vs-js; pnpm install; pnpm run check
+node labs\http-lab\server.js        # http://127.0.0.1:3100
+```
 
 ---
 

@@ -1,0 +1,18 @@
+{
+  "name": "ts-vs-js-lab",
+  "private": true,
+  "scripts": {
+    "check": "tsc --noEmit",
+    "check:broken": "tsc --ignoreConfig --noEmit --strict broken/01-bug.ts",
+    "build": "tsc",
+    "demo:bug": "node js/01-bug.js",
+    "demo:erased": "node dist/02-erased.js",
+    "demo:structural": "node dist/03-structural.js",
+    "demo:inference": "node dist/04-inference.js",
+    "demo:unknown": "node dist/05-any-vs-unknown.js",
+    "demo:narrowing": "node dist/06-narrowing.js"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
