@@ -16,14 +16,16 @@
 
 ## 当前周
 
-**第 8 周 · 阶段 1 收尾**（D49–D56：自测 + 复盘 + 项目 1 设计）
+**第 9 周 · 阶段 2：React 与工程化**（W9–W12，D57–D84）
 
-- 逐日任务：[notes/W8-任务.md](notes/W8-任务.md)
-- 项目 1 文档模板（D53–D55 填写产出）：`projects/task-board/docs/`
-- TS 自测：`cd labs\ts-vs-js; pnpm run quiz`（答案见同目录 `D49-类型自测-答案.md`；`fs.d.ts` 阅读记录见 `D49-fs-dts-reading.md`）
-- 参考：[notes/W3-W8-任务.md](notes/W3-W8-任务.md)、[labs/http-lab/README.md](labs/http-lab/README.md)
+W8 收尾周已跳过（模板保留在 `projects/task-board/docs/`，需要时再补）；D57 用 30 分钟写《最小接口契约》替代。
 
-> W8 的交接物（用户故事 + 数据模型 + 接口草案）会直接成为阶段 2（React）和阶段 3（后端）的输入。
+- 逐日任务：[notes/W9-W12-任务.md](notes/W9-W12-任务.md)（⭐ 为必做日）
+- 数据源：[labs/mock-tasks-api/README.md](labs/mock-tasks-api/README.md)（`node labs\mock-tasks-api\server.mjs` → 3200）
+- 参考：[labs/ts-vs-js/](labs/ts-vs-js/)、[notes/W8-任务.md](notes/W8-任务.md)
+- D49 记录：[D49-类型自测-答案.md](labs/ts-vs-js/D49-类型自测-答案.md)、[D49-fs-dts-reading.md](labs/ts-vs-js/D49-fs-dts-reading.md)
+
+> 阶段 2 的产物是一个上线可访问的任务应用，以及它背后的接口契约（阶段 3 会照着它实现真正的后端）。
 
 ---
 
