@@ -2,7 +2,8 @@
 	"name": "task-board-search-app",
 	"private": true,
 	"scripts": {
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"build": "tsc -p tsconfig.app.json"
 	},
 	"devDependencies": {
 		"typescript": "^7.0.2"

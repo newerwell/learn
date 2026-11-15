@@ -384,6 +384,7 @@
             <a href="#d45-title">D45 泛型</a>
             <a href="#d46-title">D46 类型收窄</a>
             <a href="#d47-title">D47 工具类型</a>
+            <a href="#d48-title">D48 D42 迁移 TS</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1472,6 +1473,22 @@ type CreatedTask = ReturnType&lt;typeof createTask&gt;;</code></pre>
         </ul>
         <p><code>TaskListItem</code> 使用 <code>Pick</code> 明确选择列表展示字段；实体字段变化时，检查这个列表是否也应该展示新字段。示例与派生类型位于 <code>src/d47-derived-types.ts</code>。</p>
         <p><a href="search-app/src/d47-derived-types.ts">查看工具类型示例</a></p>
+    </section>
+
+    <section aria-labelledby="d48-title">
+        <h2 id="d48-title">D48：把 D42 搜索应用迁到 TypeScript</h2>
+        <p>当前分支是 <code>ts</code>。搜索逻辑的维护源码在 <code>projects/task-board/search-app/src/app.ts</code>，页面加载由 TypeScript 编译生成的 <code>public/app.js</code>。</p>
+        <pre><code>cd projects/task-board/search-app
+pnpm install
+pnpm typecheck
+pnpm build</code></pre>
+        <ul>
+            <li><code>strict</code> 与 <code>noUncheckedIndexedAccess</code> 保持开启；API JSON 先按 <code>unknown</code> 处理，再用类型守卫验证。</li>
+            <li>源码不写 <code>any</code>，错误通过补充类型和运行时检查解决。</li>
+            <li><code>typecheck</code> 检查所有练习源码但不生成文件；<code>build</code> 只编译 <code>app.ts</code>，更新页面运行的 <code>public/app.js</code>。</li>
+        </ul>
+        <p>提交前可用 <code>rg -n "\bany\b" src</code> 检查源码，再用 <code>pnpm typecheck</code> 确认 0 报错。</p>
+        <p><a href="search-app/">打开已迁移的搜索应用</a></p>
     </section>
 
     <aside aria-labelledby="tips">
