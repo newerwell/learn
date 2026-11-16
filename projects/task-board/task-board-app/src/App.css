@@ -247,6 +247,127 @@
   line-height: 1.7;
 }
 
+.request-controls {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.request-controls label {
+  color: #26334a;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.request-controls input,
+.request-controls select {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e5;
+  border-radius: 9px;
+  background: #fff;
+  color: #253047;
+  font: inherit;
+}
+
+.request-controls input:focus-visible,
+.request-controls select:focus-visible,
+.request-button:focus-visible,
+.page-button:focus-visible {
+  outline: 2px solid #5267d8;
+  outline-offset: 2px;
+}
+
+.request-controls input:disabled {
+  background: #f2f4f8;
+  color: #768195;
+}
+
+.request-button,
+.page-button {
+  padding: 9px 13px;
+  border: 1px solid #cbd5e5;
+  border-radius: 9px;
+  background: #fff;
+  color: #344264;
+  font: inherit;
+  cursor: pointer;
+}
+
+.request-button {
+  justify-self: start;
+  border-color: #5267d8;
+  background: #5267d8;
+  color: #fff;
+  font-weight: 700;
+}
+
+.page-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  color: #526079;
+  font-size: 0.9rem;
+}
+
+.page-button[aria-pressed="true"] {
+  border-color: #5267d8;
+  background: #eef1ff;
+  color: #263f9a;
+  font-weight: 700;
+}
+
+.request-loading,
+.request-empty,
+.request-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  color: #526079;
+  line-height: 1.7;
+}
+
+.loading-indicator {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border: 2px solid #d5dcf3;
+  border-top-color: #5267d8;
+  border-radius: 50%;
+  animation: loading-spin 0.8s linear infinite;
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.request-error {
+  padding: 16px;
+  border: 1px solid #f0c5c5;
+  border-radius: 12px;
+  background: #fff7f7;
+  color: #813b3b;
+}
+
+.request-error p {
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.request-notes {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding-left: 22px;
+  color: #394a70;
+  line-height: 1.7;
+}
+
 .empty-state {
   margin-top: 18px;
   color: #6c778a;

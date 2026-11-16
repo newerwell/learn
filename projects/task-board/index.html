@@ -392,6 +392,7 @@
             <a href="#d59-title">D59 Props 拆分</a>
             <a href="#d60-title">D60 useState 表单</a>
             <a href="#d61-title">D61 useEffect</a>
+            <a href="#d62-title">D62 数据获取</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1575,6 +1576,17 @@ pnpm dev</code></pre>
             <li>隐藏计时器组件，确认 cleanup 调用 <code>clearInterval</code>；重新显示会启动新计时器。</li>
         </ul>
         <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
+    </section>
+
+    <section aria-labelledby="d62-title">
+        <h2 id="d62-title">D62：手写数据获取：三态 + 取消</h2>
+        <p>先在仓库根目录启动 <code>node labs\mock-tasks-api\server.mjs</code>，再启动 React 前端。请求 effect 使用 <code>AbortController</code>；页码变化或组件卸载时取消旧请求。</p>
+        <p>页面可切换正常列表、空列表、404 和 500。断开网络后点击“重新请求当前页”，会显示可重试的网络错误。打开 F12 → Network，快速切换页码观察旧请求取消。</p>
+        <ul>
+            <li>分别观察 loading、success、empty 和 error 状态；空数组是成功响应，不是错误。</li>
+            <li><code>fetch</code> 遇到 404 不会自动 reject，必须检查 <code>response.ok</code>。</li>
+            <li>可在 <code>projects\task-board\task-board-app</code> 查看完整交互练习和启动步骤。</li>
+        </ul>
     </section>
 
     <aside aria-labelledby="tips">
