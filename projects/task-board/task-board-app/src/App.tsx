@@ -1,54 +1,39 @@
+import { Panel } from './components/Panel'
+import { TaskList } from './components/TaskList'
+import { Toolbar } from './components/Toolbar'
+import type { Task } from './types/task'
 import './App.css'
-
-type Task = {
-  id: string
-  title: string
-  done: boolean
-}
 
 const tasks: Task[] = [
   { id: 't_1', title: '写周报', done: false },
   { id: 't_2', title: '买菜', done: true },
 ]
 
-function App() {
-  const completedCount = tasks.filter((task) => task.done).length
+const completedCount = tasks.filter((task) => task.done).length
 
+function handleToggleRequest(taskId: string) {
+  console.info('收到任务切换请求：', taskId)
+}
+
+function App() {
   return (
     <main className="lesson">
-      <p className="eyebrow">D58 · JSX 与列表渲染</p>
-      <h1>我的任务</h1>
+      <p className="eyebrow">D59 · Props 与组件拆分</p>
+      <h1>组件各做一件事</h1>
       <p className="intro">
-        用固定数组练习 JSX 表达式、列表渲染和条件渲染。
+        App 负责组合；工具栏、任务列表、任务行和面板分别负责自己的界面。
       </p>
 
-      <section className="concept" aria-labelledby="tasks-title">
-        <h2 id="tasks-title">今天的任务</h2>
-        <p>
-          共 {tasks.length} 项，已完成 {completedCount} 项。
+      <Panel title="今天的任务">
+        <Toolbar total={tasks.length} completed={completedCount} />
+        <TaskList tasks={tasks} onToggle={handleToggleRequest} />
+        <p className="component-note">
+          点击任务图标会调用父组件传入的回调；状态更新将在 D60 加入。
         </p>
-
-        {tasks.length > 0 ? (
-          <ul className="task-list">
-            {tasks.map((task) => (
-              <li key={task.id}>
-                <span aria-hidden="true">{task.done ? '✅' : '⬜'}</span>
-                <span>{task.title}</span>
-                {task.done && <strong>已完成</strong>}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="empty-state">今天没有任务。</p>
-        )}
-        <p>
-          <code>map</code> 把数组逐项变成列表；条件表达式决定显示列表还是空状态。
-          每项使用稳定的任务 ID 作为 <code>key</code>，列表顺序改变时不要用数组下标代替。
-        </p>
-      </section>
+      </Panel>
 
       <p className="next-step">
-        下一课 D59：把任务行拆成带类型的 TaskList 和 TaskItem 组件。
+        下一课 D60：把任务状态放在共同父组件中，用 useState 更新。
       </p>
     </main>
   )

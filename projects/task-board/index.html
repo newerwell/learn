@@ -389,6 +389,7 @@
             <a href="#d50-title">D50 CSS 复盘</a>
             <a href="#d57-title">D57 React 起步</a>
             <a href="#d58-title">D58 JSX 列表</a>
+            <a href="#d59-title">D59 Props 拆分</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1536,6 +1537,18 @@ pnpm dev</code></pre>
             <li>把 <code>tasks</code> 临时改为空数组，确认空状态出现；再恢复两条任务。</li>
         </ul>
         <p>启动预览：在仓库根目录进入 <code>projects\task-board\task-board-app</code>，运行 <code>pnpm dev</code>。</p>
+    </section>
+
+    <section aria-labelledby="d59-title">
+        <h2 id="d59-title">D59：Props 与组件拆分</h2>
+        <p>把 D58 页面拆成 <code>TaskList</code>、<code>TaskItem</code>、<code>Toolbar</code> 和带 <code>children</code> 的 <code>Panel</code>。组件代码放在 <code>projects/task-board/task-board-app/src/components</code>，<code>App</code> 负责组合它们。</p>
+        <p><code>TaskItemProps</code> 用 <code>task: Task</code> 接收只读展示数据，用 <code>onToggle: (id: string) =&gt; void</code> 把点击请求传回父组件。当前回调只在 Console 留记录；真正更新状态留给 D60。</p>
+        <ul>
+            <li>每个组件少于 80 行，<code>App</code> 主要负责组合。</li>
+            <li>说明为什么需要被多个子组件共享的数据应放在共同父组件。</li>
+            <li>说明 props 是只读输入；子组件通过回调请求父组件更新，而不是直接改 props。</li>
+        </ul>
+        <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
     </section>
 
     <aside aria-labelledby="tips">

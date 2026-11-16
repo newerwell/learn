@@ -79,9 +79,44 @@
   background: #fff;
 }
 
+.task-toggle {
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.task-toggle:focus-visible {
+  outline: 2px solid #5267d8;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.task-title.is-done {
+  color: #6c778a;
+  text-decoration: line-through;
+}
+
 .task-list strong {
   margin-left: auto;
   color: #287a52;
+  font-size: 0.85rem;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0;
+  color: #5267d8;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.component-note {
+  color: #6c778a;
   font-size: 0.85rem;
 }
 
