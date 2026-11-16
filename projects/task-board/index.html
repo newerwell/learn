@@ -391,6 +391,7 @@
             <a href="#d58-title">D58 JSX 列表</a>
             <a href="#d59-title">D59 Props 拆分</a>
             <a href="#d60-title">D60 useState 表单</a>
+            <a href="#d61-title">D61 useEffect</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1560,6 +1561,18 @@ pnpm dev</code></pre>
             <li>新增任务、勾选完成、删除任务，确认工具栏统计随 state 更新。</li>
             <li>说明为什么两个 <code>setCount(count + 1)</code> 读取同一轮渲染的 count，最终只加 1；两个 <code>setCount((value) =&gt; value + 1)</code> 会依次处理，最终加 2。</li>
             <li>说明 tasks 属于 <code>App</code>，因为表单、列表和统计都依赖它；子组件通过 props 和回调沟通。</li>
+        </ul>
+        <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
+    </section>
+
+    <section aria-labelledby="d61-title">
+        <h2 id="d61-title">D61：useEffect 的正确姿势</h2>
+        <p><code>useEffect</code> 用来把 React 与定时器、浏览器标题等外部系统同步。空依赖数组表示 effect 在挂载时启动；依赖数组包含 <code>query</code> 时，query 变化后先清理旧 effect，再启动新 effect。</p>
+        <p>在 React 开发环境的 StrictMode 下，首次挂载会额外执行一轮 setup → cleanup → setup。按 F12 打开开发者工具并切到 Console，观察 <code>[D61]</code> 日志即可，不用粘贴代码。</p>
+        <ul>
+            <li>搜索结果由当前 tasks 和 query 在渲染时计算，不用 effect 保存重复数据。</li>
+            <li>新增任务在表单的 <code>onSubmit</code> 事件中处理，不通过 effect 监听输入变化。</li>
+            <li>隐藏计时器组件，确认 cleanup 调用 <code>clearInterval</code>；重新显示会启动新计时器。</li>
         </ul>
         <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
     </section>

@@ -196,6 +196,57 @@
   font-size: 0.85rem;
 }
 
+.component-note code,
+.effect-console-tip code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #e2e8ff;
+  color: #263f9a;
+}
+
+.effect-console-tip {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f2f5ff;
+  color: #394a70;
+  line-height: 1.7;
+}
+
+.effect-toggle {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: #5267d8;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.effect-toggle:focus-visible {
+  outline: 2px solid #263f9a;
+  outline-offset: 3px;
+}
+
+.timer-readout {
+  margin: 16px 0 0;
+  color: #394a70;
+}
+
+.timer-readout strong {
+  color: #263f9a;
+  font-variant-numeric: tabular-nums;
+}
+
+.effect-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding-left: 22px;
+  color: #394a70;
+  line-height: 1.7;
+}
+
 .empty-state {
   margin-top: 18px;
   color: #6c778a;
