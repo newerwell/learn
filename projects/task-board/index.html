@@ -393,6 +393,7 @@
             <a href="#d60-title">D60 useState 表单</a>
             <a href="#d61-title">D61 useEffect</a>
             <a href="#d62-title">D62 数据获取</a>
+            <a href="#d63-title">D63 本地 CRUD</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1587,6 +1588,17 @@ pnpm dev</code></pre>
             <li><code>fetch</code> 遇到 404 不会自动 reject，必须检查 <code>response.ok</code>。</li>
             <li>可在 <code>projects\task-board\task-board-app</code> 查看完整交互练习和启动步骤。</li>
         </ul>
+    </section>
+
+    <section aria-labelledby="d63-title">
+        <h2 id="d63-title">D63：周复盘——本地状态版 CRUD</h2>
+        <p>本日把任务看板切回本地 state，不请求 API。可新增、勾选、删除任务，按全部/未完成/已完成筛选，并查看完成率。</p>
+        <ul>
+            <li>任务数组由 <code>App</code> 持有；子组件通过 props 接收数据，通过回调请求更新。</li>
+            <li>完成数、完成率和筛选结果在渲染时从 tasks 计算，不另存冗余 state。</li>
+            <li>五行复盘模板在 <code>notes/W9-W12-任务.md</code>，写出最难拆的组件和原因。</li>
+        </ul>
+        <p>预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
     </section>
 
     <aside aria-labelledby="tips">
