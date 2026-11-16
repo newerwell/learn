@@ -52,6 +52,22 @@ function fail(res, status, code, message, details = {}) {
   send(res, status, { code, message, details });
 }
 
+function isJsonObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function normalizedTitle(res, value) {
+  if (typeof value !== 'string' || value.trim() === '') {
+    fail(res, 422, 'TITLE_REQUIRED', 'title 不能为空', { field: 'title' });
+    return null;
+  }
+  if (value.length > 200) {
+    fail(res, 422, 'TITLE_TOO_LONG', 'title 不能超过 200 字', { field: 'title' });
+    return null;
+  }
+  return value.trim();
+}
+
 async function readJson(req) {
   const chunks = [];
   for await (const c of req) chunks.push(c);
@@ -60,7 +76,7 @@ async function readJson(req) {
   try {
     return JSON.parse(raw);
   } catch {
-    return null; // 解析失败
+    return undefined; // 解析失败
   }
 }
 
@@ -101,17 +117,14 @@ const server = http.createServer(async (req, res) => {
 
   if (pathname === '/api/tasks' && req.method === 'POST') {
     const body = await readJson(req);
-    if (body === null) return fail(res, 400, 'INVALID_JSON', '请求体不是合法 JSON');
-    if (typeof body.title !== 'string' || body.title.trim() === '') {
-      return fail(res, 422, 'TITLE_REQUIRED', 'title 不能为空', { field: 'title' });
-    }
-    if (body.title.length > 200) {
-      return fail(res, 422, 'TITLE_TOO_LONG', 'title 不能超过 200 字', { field: 'title' });
-    }
+    if (body === undefined) return fail(res, 400, 'INVALID_JSON', '请求体不是合法 JSON');
+    if (!isJsonObject(body)) return fail(res, 400, 'INVALID_BODY', '请求体必须是 JSON 对象');
+    const title = normalizedTitle(res, body.title);
+    if (title === null) return;
 
     const task = {
       id: `t_${seq++}`,
-      title: body.title.trim(),
+      title,
       done: Boolean(body.done),
       dueAt: body.dueAt ?? null,
       tags: Array.isArray(body.tags) ? body.tags : [],
@@ -133,12 +146,12 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === 'PATCH') {
       const body = await readJson(req);
-      if (body === null) return fail(res, 400, 'INVALID_JSON', '请求体不是合法 JSON');
+      if (body === undefined) return fail(res, 400, 'INVALID_JSON', '请求体不是合法 JSON');
+      if (!isJsonObject(body)) return fail(res, 400, 'INVALID_BODY', '请求体必须是 JSON 对象');
       if ('title' in body) {
-        if (typeof body.title !== 'string' || body.title.trim() === '') {
-          return fail(res, 422, 'TITLE_REQUIRED', 'title 不能为空', { field: 'title' });
-        }
-        task.title = body.title.trim();
+        const title = normalizedTitle(res, body.title);
+        if (title === null) return;
+        task.title = title;
       }
       if ('done' in body) task.done = Boolean(body.done);
       if ('dueAt' in body) task.dueAt = body.dueAt ?? null;

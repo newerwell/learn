@@ -1483,7 +1483,7 @@ type CreatedTask = ReturnType&lt;typeof createTask&gt;;</code></pre>
 
     <section aria-labelledby="d48-title">
         <h2 id="d48-title">D48：把 D42 搜索应用迁到 TypeScript</h2>
-        <p>当前分支是 <code>ts</code>。搜索逻辑的维护源码在 <code>projects/task-board/search-app/src/app.ts</code>，页面加载由 TypeScript 编译生成的 <code>public/app.js</code>。</p>
+        <p>搜索逻辑的 TypeScript 源码在 <code>projects/task-board/search-app/src/app.ts</code>，页面加载的是 TypeScript 编译生成的 <code>public/app.js</code>。</p>
         <pre><code>cd projects/task-board/search-app
 pnpm install
 pnpm typecheck

@@ -38,6 +38,7 @@ $env:PORT=3300; node labs\mock-tasks-api\server.mjs   # 换端口
 
 | 码 | code | 触发方式 |
 |---|---|---|
+| 400 | INVALID_BODY | 请求体不是 JSON 对象（例如数组、字符串或 null） |
 | 400 | `INVALID_JSON` | 请求体不是合法 JSON |
 | 404 | `TASK_NOT_FOUND` | 访问不存在的 id |
 | 422 | `TITLE_REQUIRED` / `TITLE_TOO_LONG` | title 为空 / 超 200 字 |
