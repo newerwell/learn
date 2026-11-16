@@ -37,6 +37,10 @@
   color: #26334a;
 }
 
+.concept + .concept {
+  margin-top: 20px;
+}
+
 .concept h2 {
   margin: 0 0 12px;
   color: #263f9a;
@@ -103,6 +107,78 @@
   margin-left: auto;
   color: #287a52;
   font-size: 0.85rem;
+}
+
+.task-title {
+  overflow-wrap: anywhere;
+}
+
+.task-delete {
+  margin-left: auto;
+  padding: 6px 9px;
+  border: 1px solid #d5dceb;
+  border-radius: 8px;
+  background: #fff;
+  color: #526079;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.task-delete:hover {
+  border-color: #d98888;
+  color: #a33b3b;
+}
+
+.task-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.task-form label {
+  color: #26334a;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.task-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.task-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e5;
+  border-radius: 9px;
+  background: #fff;
+  color: #253047;
+  font: inherit;
+}
+
+.task-form input:focus-visible,
+.task-form button:focus-visible,
+.task-delete:focus-visible {
+  outline: 2px solid #5267d8;
+  outline-offset: 2px;
+}
+
+.task-form button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: #5267d8;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.task-form button:disabled {
+  background: #aeb8d7;
+  cursor: not-allowed;
 }
 
 .toolbar {

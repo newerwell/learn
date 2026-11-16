@@ -390,6 +390,7 @@
             <a href="#d57-title">D57 React 起步</a>
             <a href="#d58-title">D58 JSX 列表</a>
             <a href="#d59-title">D59 Props 拆分</a>
+            <a href="#d60-title">D60 useState 表单</a>
             <a href="#tips">学习提示</a>
         </nav>
         <!-- 按钮外观的链接：跳转到已有的注册表单 -->
@@ -1542,11 +1543,23 @@ pnpm dev</code></pre>
     <section aria-labelledby="d59-title">
         <h2 id="d59-title">D59：Props 与组件拆分</h2>
         <p>把 D58 页面拆成 <code>TaskList</code>、<code>TaskItem</code>、<code>Toolbar</code> 和带 <code>children</code> 的 <code>Panel</code>。组件代码放在 <code>projects/task-board/task-board-app/src/components</code>，<code>App</code> 负责组合它们。</p>
-        <p><code>TaskItemProps</code> 用 <code>task: Task</code> 接收只读展示数据，用 <code>onToggle: (id: string) =&gt; void</code> 把点击请求传回父组件。当前回调只在 Console 留记录；真正更新状态留给 D60。</p>
+        <p><code>TaskItemProps</code> 用 <code>task: Task</code> 接收只读展示数据，用 <code>onToggle: (id: string) =&gt; void</code> 把点击请求传回父组件。D59 先用 Console 演示回调；D60 已由 <code>App</code> 使用 state 实际更新。</p>
         <ul>
             <li>每个组件少于 80 行，<code>App</code> 主要负责组合。</li>
             <li>说明为什么需要被多个子组件共享的数据应放在共同父组件。</li>
             <li>说明 props 是只读输入；子组件通过回调请求父组件更新，而不是直接改 props。</li>
+        </ul>
+        <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
+    </section>
+
+    <section aria-labelledby="d60-title">
+        <h2 id="d60-title">D60：useState 与受控表单</h2>
+        <p>在 <code>src/App.tsx</code> 用 <code>useState</code> 保存任务数组和输入框文字。输入框把 <code>value</code> 与 <code>onChange</code> 成对绑定；提交时去掉首尾空格，再新增任务。</p>
+        <p>完成和删除由子组件通过回调请求父组件处理：切换使用 <code>map</code> 和对象展开生成新对象，删除使用 <code>filter</code> 生成新数组，新增使用 <code>[newTask, ...prev]</code>。不要直接调用 <code>tasks.push</code>。</p>
+        <ul>
+            <li>新增任务、勾选完成、删除任务，确认工具栏统计随 state 更新。</li>
+            <li>说明为什么两个 <code>setCount(count + 1)</code> 读取同一轮渲染的 count，最终只加 1；两个 <code>setCount((value) =&gt; value + 1)</code> 会依次处理，最终加 2。</li>
+            <li>说明 tasks 属于 <code>App</code>，因为表单、列表和统计都依赖它；子组件通过 props 和回调沟通。</li>
         </ul>
         <p>运行预览：进入 <code>projects\task-board\task-board-app</code> 后执行 <code>pnpm dev</code>。</p>
     </section>
